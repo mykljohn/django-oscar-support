@@ -3,7 +3,7 @@ from django.template import loader, Context
 from django.utils.encoding import force_unicode
 from django.utils.html import conditional_escape
 from django.template.loader import render_to_string
-from django.forms.widgets import Widget, RadioInput, RadioFieldRenderer
+from django.forms.widgets import Widget, RadioSelect, RadioFieldRenderer
 
 
 class AutoCompleteWiget(Widget):
@@ -29,7 +29,7 @@ class AutoCompleteWiget(Widget):
 AutoCompleteWidget = AutoCompleteWiget
 
 
-class CustomRadioInput(RadioInput):
+class CustomRadioInput(RadioSelect):
     template_name = 'oscar_support/partials/custom_radio_select.html'
 
     def render(self, name=None, value=None, attrs=None, choices=()):
