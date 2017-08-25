@@ -1,5 +1,4 @@
-from django.db.models import get_model
-
+from django.apps import apps
 from rest_framework import viewsets
 
 from oscar.core.compat import get_user_model
@@ -8,8 +7,7 @@ from . import serializers
 from .mixins import UserFilterMixin
 
 User = get_user_model()
-Group = get_model('auth', 'Group')
-
+Group = apps.get_model('auth', 'Group')
 
 class CustomerViewSet(UserFilterMixin, viewsets.ModelViewSet):
     model = User
