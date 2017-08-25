@@ -9,7 +9,7 @@ from . import views
 router = routers.DefaultRouter()
 router.register(r'customers', views.CustomerViewSet, base_name="customer")
 router.register(r'agents', views.AgentViewSet, base_name="agent")
-router.register(r'groups', views.GroupViewSet)
+router.register(r'groups', views.GroupViewSet, base_name="group")
 
 
 urlpatterns = patterns(
