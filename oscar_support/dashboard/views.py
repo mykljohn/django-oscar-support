@@ -1,12 +1,13 @@
 from django.views import generic
-from django.db.models import get_model, Q
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+
+from oscar.core.loading import get_model
 
 from . import forms
 from .. import utils
 
-#Note = get_model('oscar_support', 'Note')
 Ticket = get_model('oscar_support', 'Ticket')
 Message = get_model('oscar_support', 'Message')
 TicketStatus = get_model('oscar_support', 'TicketStatus')
