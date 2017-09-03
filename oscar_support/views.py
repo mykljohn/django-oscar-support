@@ -1,7 +1,15 @@
-from django.views import generic
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    FormView,
+    ListView,
+    UpdateView,
+    View
+)
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
+from oscar.core.loading import get_class
 from oscar.core.loading import get_model
 
 from . import utils
@@ -11,12 +19,14 @@ from .forms import TicketUpdateForm
 Ticket = get_model('oscar_support', 'Ticket')
 Message = get_model('oscar_support', 'Message')
 TicketStatus = get_model('oscar_support', 'TicketStatus')
+PageTitleMixin = get_class('customer.mixins', 'PageTitleMixin')
 
 
-class TicketListView(generic.ListView):
+class TicketListView(PageTitleMixin, ListView):
     model = Ticket
     template_name = 'oscar_support/customer/ticket_list.html'
     context_object_name = 'ticket_list'
+    active_tab = 'support'
 
     def get_queryset(self, queryset=None):
         # we only want so show top-level tickets for now
@@ -35,11 +45,12 @@ class TicketListView(generic.ListView):
         return ctx
 
 
-class TicketCreateView(generic.CreateView):
+class TicketCreateView(PageTitleMixin, CreateView):
     model = Ticket
     form_class = TicketCreateForm
     context_object_name = 'ticket'
     template_name = 'oscar_support/customer/ticket_create.html'
+    active_tab = 'support'
 
     def get_form_kwargs(self, **kwargs):
         kwargs = super(TicketCreateView, self).get_form_kwargs(**kwargs)
@@ -50,11 +61,12 @@ class TicketCreateView(generic.CreateView):
         return reverse("support:customer-ticket-list")
 
 
-class TicketUpdateView(generic.UpdateView):
+class TicketUpdateView(PageTitleMixin, UpdateView):
     model = Ticket
     context_object_name = 'ticket'
     form_class = TicketUpdateForm
     template_name = 'oscar_support/customer/ticket_update.html'
+    active_tab = 'support'
 
     def form_valid(self, form):
         message_text = form.cleaned_data.get('message_text')
