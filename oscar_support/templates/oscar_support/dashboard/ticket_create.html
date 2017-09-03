@@ -2,7 +2,6 @@
 
 {% load form_tags %}
 {% load i18n %}
-{% load url from future %}
 
 {% block extrahead %}
     {{ block.super }}
@@ -15,7 +14,6 @@
 <ul class="breadcrumb">
     <li>
         <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
-        <span class="divider">/</span>
     </li>
     <li class="active">{% trans "Support" %}</li>
 </ul>

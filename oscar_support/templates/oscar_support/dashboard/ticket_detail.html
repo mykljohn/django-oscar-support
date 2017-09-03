@@ -2,7 +2,6 @@
 {% load currency_filters %}
 {% load ticket_tags %}
 {% load i18n %}
-{% load url from future %}
 
 {% block body_class %}support home{% endblock %}
 
@@ -10,7 +9,6 @@
 <ul class="breadcrumb">
     <li>
         <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
-        <span class="divider">/</span>
     </li>
     <li class="active">{% trans "Support tickets" %}</li>
 </ul>
