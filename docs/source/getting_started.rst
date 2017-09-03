@@ -73,17 +73,13 @@ Oscar's ``OSCAR_DASHBOARD_NAVIGATION`` settings::
 
     ....
 
-    OSCAR_DASHBOARD_NAVIGATION = OSCAR_DASHBOARD_NAVIGATION + [
+    OSCAR_DASHBOARD_NAVIGATION += [
         {
             'label': _("Support"),
             'icon': 'icon-comments',
             'url_name': 'support-dashboard:ticket-list',
         }
     ]
-
-.. note:: Make sure that you aren't using ``OSCAR_DASHBOARD_NAVIGATION +=``
-    because this will cause duplicate entries due to a bug in Django that will
-    only be fixed in version 1.6+
 
 All that is left to do now is integrating the customer-facing part of the
 support system. The templates that come with *django-oscar-support* extend
