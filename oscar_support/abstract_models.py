@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from shortuuidfield import ShortUUIDField
@@ -17,11 +18,12 @@ class BaseSupportModel(models.Model):
         abstract = True
 
 
+@python_2_unicode_compatible
 class AbstractTicketType(BaseSupportModel):
     slug = AutoSlugField(_("Slug"), populate_from='name', unique=True)
     name = models.CharField(_("Name"), max_length=64)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -30,11 +32,12 @@ class AbstractTicketType(BaseSupportModel):
         verbose_name_plural = _("Ticket types")
 
 
+@python_2_unicode_compatible
 class AbstractTicketStatus(BaseSupportModel):
     slug = AutoSlugField(_("Slug"), populate_from='name', unique=True)
     name = models.CharField(_("Name"), max_length=64)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -43,6 +46,7 @@ class AbstractTicketStatus(BaseSupportModel):
         verbose_name_plural = _("Ticket statuses")
 
 
+@python_2_unicode_compatible
 class AbstractTicket(ModificationTrackingMixin, BaseSupportModel):
     number = models.CharField(
         _("Number"),
@@ -145,7 +149,7 @@ class AbstractTicket(ModificationTrackingMixin, BaseSupportModel):
             self.subticket_id = ticket_numbers['subticket_id']
         return super(AbstractTicket, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return "Ticket #{0}".format(self.printable_number)
 
     class Meta:
@@ -169,6 +173,7 @@ class AbstractPriority(BaseSupportModel):
         verbose_name_plural = _("Priorities")
 
 
+@python_2_unicode_compatible
 class AbstractMessage(ModificationTrackingMixin, BaseSupportModel):
     PUBLIC = u'public'
     INTERNAL = u'internal'
@@ -198,7 +203,7 @@ class AbstractMessage(ModificationTrackingMixin, BaseSupportModel):
     def is_internal(self):
         return self.type == self.INTERNAL
 
-    def __unicode__(self):
+    def __str__(self):
         return "{0} from {1} for ticket #{2}".format(
             self.type,
             self.user.email,
@@ -212,6 +217,7 @@ class AbstractMessage(ModificationTrackingMixin, BaseSupportModel):
         verbose_name_plural = _("Messages")
 
 
+@python_2_unicode_compatible
 class AbstractRelatedItem(ModificationTrackingMixin, BaseSupportModel):
     ticket = models.ForeignKey(
         'Ticket',
@@ -235,7 +241,7 @@ class AbstractRelatedOrderLine(AbstractRelatedItem):
         related_name="ticket_related_order_lines",
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return "{0} related to {1}".format(self.line, self.ticket)
 
     class Meta:
@@ -244,6 +250,7 @@ class AbstractRelatedOrderLine(AbstractRelatedItem):
         verbose_name_plural = _("Related order lines")
 
 
+@python_2_unicode_compatible
 class AbstractRelatedOrder(AbstractRelatedItem):
     order = models.ForeignKey(
         "order.Order",
@@ -251,7 +258,7 @@ class AbstractRelatedOrder(AbstractRelatedItem):
         related_name="ticket_related_orders",
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return "{0} related to {1}".format(self.order, self.ticket)
 
     class Meta:
@@ -260,6 +267,7 @@ class AbstractRelatedOrder(AbstractRelatedItem):
         verbose_name_plural = _("Related orders")
 
 
+@python_2_unicode_compatible
 class AbstractRelatedProduct(AbstractRelatedItem):
     product = models.ForeignKey(
         "catalogue.Product",
@@ -267,7 +275,7 @@ class AbstractRelatedProduct(AbstractRelatedItem):
         related_name="ticket_related_products",
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return "{0} related to {1}".format(self.product, self.ticket)
 
     class Meta:
@@ -276,6 +284,7 @@ class AbstractRelatedProduct(AbstractRelatedItem):
         verbose_name_plural = _("Related products")
 
 
+@python_2_unicode_compatible
 class AbstractAttachment(ModificationTrackingMixin, BaseSupportModel):
     ticket = models.ForeignKey(
         'Ticket',
@@ -292,7 +301,7 @@ class AbstractAttachment(ModificationTrackingMixin, BaseSupportModel):
         verbose_name=_("File")
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return "{0} attached to {1}".format(self.file.url, self.ticket)
 
     class Meta:
