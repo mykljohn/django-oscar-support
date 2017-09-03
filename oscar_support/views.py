@@ -1,3 +1,6 @@
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -6,8 +9,6 @@ from django.views.generic import (
     UpdateView,
     View
 )
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
 
 from oscar.core.loading import get_class
 from oscar.core.loading import get_model
@@ -27,6 +28,7 @@ class TicketListView(PageTitleMixin, ListView):
     template_name = 'oscar_support/customer/ticket_list.html'
     context_object_name = 'ticket_list'
     active_tab = 'support'
+    page_title = _('Your tickets')
 
     def get_queryset(self, queryset=None):
         # we only want so show top-level tickets for now
@@ -51,6 +53,7 @@ class TicketCreateView(PageTitleMixin, CreateView):
     context_object_name = 'ticket'
     template_name = 'oscar_support/customer/ticket_create.html'
     active_tab = 'support'
+    page_title = _('Create a new ticket')
 
     def get_form_kwargs(self, **kwargs):
         kwargs = super(TicketCreateView, self).get_form_kwargs(**kwargs)
@@ -67,6 +70,9 @@ class TicketUpdateView(PageTitleMixin, UpdateView):
     form_class = TicketUpdateForm
     template_name = 'oscar_support/customer/ticket_update.html'
     active_tab = 'support'
+
+    def get_page_title(self):
+        return _('Update ticket #{0}').format(self.object.number)
 
     def form_valid(self, form):
         message_text = form.cleaned_data.get('message_text')
