@@ -2,12 +2,6 @@
 Getting Started
 ===============
 
-.. warning:: *django-oscar-support* has been tested with Oscar 0.6 ``master``
-    (due to it's pre-release state) and only works with commit `4aea545de3`_
-    or later. Due to major changes in the stock record architecture and the
-    customer account templates earlier version will not work with the
-    instructions below.
-
 .. _`4aea545de3`: https://github.com/tangentlabs/django-oscar/commit/4aea545de3d79fb20af49c24984541873c6be89c
 
 Installation
@@ -24,7 +18,7 @@ Start off by installing the required package either from PyPI::
 
 or install the latest version from github using::
 
-    pip install git+https://github.com/tangentlabs/django-oscar-support.git
+    pip install git+https://github.com/mykljohn/django-oscar-support.git
 
 To make your Django project aware of the new package add it to your
 ``INSTALLED_APPS``::
@@ -57,14 +51,18 @@ a default UI for these two entry points but they need to be hooked into your
 Oscar project. Let's start by adding the URL patterns to your current project
 by adding the following line into your ``urls.py`` file::
 
-    import oscar_support.urls
-
-    urlpatterns = patterns(''
+    from oscar_support.app import application as support
+    from oscar_support.api.app import application as support_api
+    from oscar_support.dashboard.app import application as support_dashboard
+    
+    urlpatterns = [
         ...
+	url(r'^dashboard/support/', include(support_dashboard.urls)),
         url(r'^', include(shop.urls)),  # Oscar's URL patterns
-        url(r'^', include(oscar_support.urls)),
+        url(r'', include(support.urls)),
+    	# TODO: url(r'^api/', include(api_urls)),
         ...
-    )
+    ]
 
 This will provide all the URLs required to interact with the support system.
 The next step is to make the dashboard UI available in the navigation using
@@ -102,11 +100,10 @@ template directory and add the following content::
 
     {% extends "oscar/customer/baseaccountpage.html" %}
     {% load i18n %}
-    {% load url from future %}
 
     {% block standard_tabs %}
         {{ block.super }}
-        <li>
+        <li{% if active_tab == 'support' %} class="active"{% endif %}>
             <a href="{% url 'support:customer-ticket-list' %}">{% trans "Support" %}</a>
         </li>
     {% endblock %}

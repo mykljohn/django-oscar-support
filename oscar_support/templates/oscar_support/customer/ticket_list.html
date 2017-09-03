@@ -11,15 +11,12 @@
 <ul class="breadcrumb">
     <li>
         <a href="{% url 'promotions:home' %}">{% trans 'Home' %}</a>
-        <span class="divider">/</span>
     </li>
     <li>
         <a href="{% url 'customer:summary' %}">{% trans 'Account' %}</a>
-        <span class="divider">/</span>
     </li>
     <li>
         <a href="{% url 'support:customer-ticket-list' %}">{% trans 'Support' %}</a>
-        <span class="divider">/</span>
     </li>
     <li class="active">{% trans 'Your tickets' %}</li>
 </ul>
@@ -58,3 +55,4 @@
     </div>
 </div>
 {% endblock content %}
+
