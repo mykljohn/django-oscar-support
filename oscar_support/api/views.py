@@ -1,4 +1,5 @@
-from django.apps import apps
+from django.db.models import get_model
+
 from rest_framework import viewsets
 
 from oscar.core.compat import get_user_model

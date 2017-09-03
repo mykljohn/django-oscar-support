@@ -1,9 +1,8 @@
-from django.db.models import get_model
+from oscar.core.loading import get_model
 from oscar_support import defaults
 
 
 class TicketNumberGenerator(object):
-
     @classmethod
     def generate_ticket_number(cls):
         return {
@@ -21,7 +20,6 @@ class TicketNumberGenerator(object):
 
 
 class TicketGenerator(object):
-
     def generate_ticket(self):
         raise NotImplementedError()
 

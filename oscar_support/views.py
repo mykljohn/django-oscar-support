@@ -1,10 +1,12 @@
 from django.views import generic
-from django.db.models import get_model
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
+from oscar.core.loading import get_model
+
 from . import utils
-from .forms import TicketUpdateForm, TicketCreateForm
+from .forms import TicketCreateForm
+from .forms import TicketUpdateForm
 
 Ticket = get_model('oscar_support', 'Ticket')
 Message = get_model('oscar_support', 'Message')
@@ -67,7 +69,6 @@ class TicketUpdateView(generic.UpdateView):
 
     def get_context_data(self, **kwargs):
         ctx = super(TicketUpdateView, self).get_context_data(**kwargs)
-        print "CONTEXT", ctx
         ctx['message_list'] = Message.objects.filter(
             user=self.request.user,
             ticket=self.object,
