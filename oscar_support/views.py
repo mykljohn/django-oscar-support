@@ -3,11 +3,8 @@ from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import (
     CreateView,
-    DeleteView,
-    FormView,
     ListView,
     UpdateView,
-    View
 )
 
 from oscar.core.loading import get_class

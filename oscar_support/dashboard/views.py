@@ -1,7 +1,8 @@
-from django.views import generic
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext_lazy as _
+from django.views import generic
 
 from oscar.core.loading import get_model
 
