@@ -1,23 +1,26 @@
-{% extends 'oscar_support/dashboard/layout.html' %}
-
+{% extends "dashboard/layout.html" %}
 {% load form_tags %}
 {% load i18n %}
+
+{% block title %}
+    {% trans "New ticket" %} | {{ block.super }}
+{% endblock %}
 
 {% block extrahead %}
     {{ block.super }}
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
 {% endblock %}
 
-{% block body_class %}create-page support new-ticket{% endblock %}
-
 {% block breadcrumbs %}
 <ul class="breadcrumb">
     <li>
         <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
     </li>
-    <li class="active">{% trans "Support" %}</li>
+    <li class="active">{% trans "New ticket" %}</li>
 </ul>
 {% endblock %}
+
+{% block body_class %}create-page support new-ticket{% endblock %}
 
 {% block header %}
 <div class="page-header">
