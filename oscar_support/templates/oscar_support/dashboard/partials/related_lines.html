@@ -2,7 +2,7 @@
 {% load currency_filters %}
 
 <div class="table-header">
-    <h3>{% trans "Related lines" %} <a class="btn pull-right" data-toggle="collapse" data-target="#related-lines">{% trans "Show/Hide" %}{{ order.number }}</a></h3>
+    <h3>{% trans "Related lines" %} <a class="btn btn-default pull-right" data-toggle="collapse" data-target="#related-lines">{% trans "Show/Hide" %}{{ order.number }}</a></h3>
 </div>
 {% for rel_line in ticket.relatedlines.all %}
     {% with line=rel_line.line %}

@@ -11,15 +11,17 @@
             Submit as {{ status_name }}
         {% endblocktrans %}
     </button>
-    <button class="btn btn-primary btn-large dropdown-toggle" data-toggle="dropdown">
+    <button class="btn btn-primary btn-large dropdown-toggle" type="button" id="dropdown-status" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
         <span class="caret"></span>
     </button>
 
-    <ul class="dropdown-menu">
+    {# TODO: replace style attributes with a proper css style #}
+
+    <ul class="dropdown-menu" aria-labelledby="dropdown-status" style="padding: 0;">
         {% get_ticket_statuses as statuses %}
         {% for ticket_status in statuses %}
         <li data-status-id="{{ ticket_status.id }}">
-            <button class="status-dropdown-button" type="submit" name='status' value="{{ ticket_status.uuid }}">
+            <button class="btn btn-default" type="submit" name='status' value="{{ ticket_status.uuid }}" style="width: 100%; border: none">
                 {% blocktrans with status=ticket_status %}
                     Submit as <strong>{{ status }}</strong>
                 {% endblocktrans %}
