@@ -24,15 +24,13 @@ class AutoCompleteWiget(Widget):
     def render(self, name, value, attrs=None):
         if value is None:
             value = u''
-        tmpl = loader.get_template(
-            'oscar_support/widgets/autocomplete_widget.html'
-        )
-        return tmpl.render(Context({
+        ctx = {
             'name': name,
             'url': self.url,
             'user_field': self.user_field,
             'value': value,
-        }))
+        }
+        return render_to_string('oscar_support/widgets/autocomplete_widget.html', context=ctx)
 
 AutoCompleteWidget = AutoCompleteWiget
 

@@ -29,7 +29,7 @@
 <form id="ticket-update-form" data-ticket-id="{{ selected_ticket.uuid }}" method="post" action="." class="form-stacked wysiwyg">
     {% csrf_token %}
 
-    <div class='row-fluid'>
+    <div class='container-fluid'>
         <aside class="col-md-3">
             <div class="table-header">
                 <i class="icon-comments icon-large"></i>{% trans "Tickets" %}
@@ -51,7 +51,8 @@
             <div class="tab-content">
                 <div id="recent-tickets" class="tab-pane active">
                     {% for ticket in ticket_list %}
-                    <div class="well {% if ticket.uuid == selected_ticket.uuid %}active{% endif %}">
+                    <div class="panel panel-default {% if ticket.uuid == selected_ticket.uuid %}active{% endif %}">
+                        <div class="panel-body">
                         <a href="{% url 'support-dashboard:ticket-update' ticket.uuid %}"
                         class="btn {% if ticket.uuid == selected_ticket.uuid %}btn-primary{% else %}btn-default{% endif %} pull-right">
                             {% trans "Select" %}
@@ -64,6 +65,7 @@
                             <span class="label label-default">{{ ticket.type.name }}</span><br />
                             <strong>{% trans "Last modified:" %}</strong> {{ ticket.date_updated|date:"jS M Y H:i" }}
                         </p>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
@@ -76,8 +78,8 @@
             </div>
             <div class="content-block">
                 {% if selected_ticket %}
-                <div class="well">
-                    <div class="row-fluid">
+                <div class="panel panel-default">
+                    <div class="container-fluid panel-body">
                         <div class="col-md-7">
                             <strong>{% trans "Last updated:" %}</strong> {{ selected_ticket.date_updated|date:"jS M Y H:i" }} <br />
                             <h3>
@@ -101,7 +103,7 @@
                         <div class="col-md-5">
                             <div class="form-assigned form-horizontal pull-right">
                                 {% for field in form.get_property_fields %}
-                                    {% include "oscar_support/partials/form_fields_horizontal.html" %}
+                                    {% include "oscar/partials/form_fields_inline.html" %}
                                 {% endfor %}
                             </div>
                         </div>
@@ -173,7 +175,7 @@
 
                 {% else %}
                 <div class="well well-blank">
-                    <p>Click on an individual ticket on the left to view or edit it. If you want to update or merge multiple tickets, select more than one.</p>
+                    <p>{% trans 'Click on an individual ticket on the left to view or edit it. If you want to update or merge multiple tickets, select more than one.' %}</p>
                 </div>
                 {% endif %}
             </div>
