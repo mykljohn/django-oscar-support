@@ -5,7 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from oscar.core.compat import get_user_model
 from oscar.core.loading import get_model
 
-from ..forms.widgets import AutoCompleteWidget, CustomRadioFieldRenderer
+from ..forms.widgets import AutoCompleteWidget
+from ..forms.widgets import CustomRadioInput
 
 User = get_user_model()
 Ticket = get_model('oscar_support', 'Ticket')
@@ -77,7 +78,7 @@ class TicketCreateForm(forms.ModelForm):
 
 class TicketUpdateForm(forms.ModelForm):
     message_type = forms.ChoiceField(
-        widget=forms.RadioSelect(renderer=CustomRadioFieldRenderer),
+        widget=CustomRadioInput(attrs={'class': 'radio-inline'}),
         choices=Message.MESSAGE_TYPES,
         label=_("Message type"),
         initial=Message.PUBLIC,

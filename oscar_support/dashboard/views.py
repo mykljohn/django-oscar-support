@@ -1,7 +1,8 @@
-from django.views import generic
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext_lazy as _
+from django.views import generic
 
 from oscar.core.loading import get_model
 
@@ -74,6 +75,7 @@ class TicketCreateView(generic.CreateView):
         ctx['default_status'] = status
         ctx['status_list'] = TicketStatus.objects.exclude(name=status.name)
         ctx['requester_create_form'] = forms.RequesterCreateForm()
+        ctx['title'] = _('New ticket')
         return ctx
 
     def get_success_url(self, **kwargs):
@@ -89,7 +91,9 @@ class TicketUpdateView(TicketListMixin, generic.UpdateView):
 
     def get_context_data(self, **kwargs):
         ctx = super(TicketUpdateView, self).get_context_data(**kwargs)
+        ticket_name = self.object
         ctx['ticket_list'] = self.get_ticket_list()
+        ctx['title'] = _('Update {name}').format(name=ticket_name)
         return ctx
 
     def form_valid(self, form):

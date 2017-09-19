@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load currency_filters %}
 <div class="table-header">
-    <h3>{% trans "Related orders:" %} <a class="btn pull-right" data-toggle="collapse" data-target="#related-orders">{% trans "Show/Hide" %}{{ order.number }}</a></h3>
+    <h3>{% trans "Related orders:" %} <a class="btn btn-default pull-right" data-toggle="collapse" data-target="#related-orders">{% trans "Show/Hide" %}{{ order.number }}</a></h3>
 </div>
 {% for rel_order in ticket.relatedorders.all %}
     {% with order=rel_order.order %}

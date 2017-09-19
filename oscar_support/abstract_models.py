@@ -162,10 +162,14 @@ class AbstractTicket(ModificationTrackingMixin, BaseSupportModel):
         unique_together = (('number', 'subticket_id'),)
 
 
+@python_2_unicode_compatible
 class AbstractPriority(BaseSupportModel):
     name = models.CharField(_("Name"), max_length=255)
     slug = AutoSlugField(_("Slug"), populate_from='name')
     comment = models.TextField(_("Comment"), blank=True)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         abstract = True
@@ -204,7 +208,7 @@ class AbstractMessage(ModificationTrackingMixin, BaseSupportModel):
         return self.type == self.INTERNAL
 
     def __str__(self):
-        return "{0} from {1} for ticket #{2}".format(
+        return "{0} from {1} for {2}".format(
             self.type,
             self.user.email,
             self.ticket
@@ -230,10 +234,14 @@ class AbstractRelatedItem(ModificationTrackingMixin, BaseSupportModel):
         related_name="%(class)ss",
     )
 
+    def __str__(self):
+        return "{0} related to {1}".format(self.ticket, self.user)
+
     class Meta:
         abstract = True
 
 
+@python_2_unicode_compatible
 class AbstractRelatedOrderLine(AbstractRelatedItem):
     line = models.ForeignKey(
         "order.Line",

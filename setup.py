@@ -17,6 +17,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'django-shortuuidfield',
+        'django-extensions',
     ],
     classifiers=[
         'Environment :: Web Environment',
