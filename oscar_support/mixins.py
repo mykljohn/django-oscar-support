@@ -4,8 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class ModificationTrackingMixin(models.Model):
-    date_created = models.DateTimeField(_("Created"))
-    date_updated = models.DateTimeField(_("Last modified"))
+    date_created = models.DateTimeField(_("Created"), blank=True)
+    date_updated = models.DateTimeField(_("Last modified"), blank=True)
 
     def save(self, *args, **kwargs):
         if not self.date_created:

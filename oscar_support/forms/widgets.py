@@ -1,17 +1,11 @@
-from django import forms
-from django.forms.utils import flatatt
 from django.forms.widgets import Widget
 from django.forms.widgets import RadioSelect
-from django.template import Context
-from django.template import loader
 from django.template.loader import render_to_string
 
 try:
     from django.utils.encoding import force_unicode as force_text
 except ImportError:
     from django.utils.encoding import force_text
-
-from django.utils.html import conditional_escape
 
 
 class AutoCompleteWiget(Widget):
