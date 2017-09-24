@@ -1,28 +1,27 @@
-from django.conf import settings
-from django.conf.urls import url, patterns, include
-
-from rest_framework import routers
+import django
+from django.conf.urls import url
+from rest_framework.urlpatterns import format_suffix_patterns
 
 from . import views
 
 
-router = routers.DefaultRouter()
-router.register(r'customers', views.CustomerViewSet, base_name="customer")
-router.register(r'agents', views.AgentViewSet, base_name="agent")
-router.register(r'groups', views.GroupViewSet, base_name="group")
+urlpatterns = [
+    # url(r'^', include(router.urls, namespace='support-api')),
+    url(r'^$', views.api_root, name='support-api'),
+    url(r'^tickets/$', views.TicketList.as_view(), name='ticket-list'),
+    url(r'^tickets/(?P<pk>[a-zA-Z0-9]+)/$', views.TicketDetail.as_view(), name='ticket-detail'),
+    # url(r'^ticket/add-ticket/$', views.AddTicketView.as_view(), name='api-tickets-add-ticket'),
+    # url(r'^ticket/add-message/$', views.AddMessageView.as_view(), name='api-tickets-add-message'),
+    # url(r'^products/(?P<pk>[0-9]+)/price/$', views.ProductPrice.as_view(), name='product-price'),
+    # url(r'^products/(?P<pk>[0-9]+)/availability/$', views.ProductAvailability.as_view(), name='product-availability'),
+    # url(r'^products/(?P<pk>[0-9]+)/stockrecords/$', views.StockRecordList.as_view(), name='product-stockrecord-list'),
+    # url(r'^messages/$', views.MessageList.as_view(), name='message-list'),
+    # url(r'^messages/(?P<pk>[0-9]+)/$', views.MessageDetail.as_view(), name='message-detail'),
+]
 
+urlpatterns = format_suffix_patterns(urlpatterns)
 
-urlpatterns = patterns(
-    '',
-    url(r'^', include(router.urls, namespace='support-api')),
-)
+if django.VERSION[:2] < (1, 8):
+    from django.conf.urls import patterns
 
-
-if settings.DEBUG:
-    urlpatterns = urlpatterns + patterns(
-        '',
-        url(
-            r'^api-auth/',
-            include('rest_framework.urls', namespace='rest_framework')
-        ),
-    )
+    urlpatterns = patterns('', *urlpatterns)
