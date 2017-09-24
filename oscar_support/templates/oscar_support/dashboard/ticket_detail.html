@@ -100,13 +100,14 @@
                                 </h3>
                             {% endwith %}
                         </div>
-                        <div class="col-md-5">
-                            <div class="form-assigned form-horizontal pull-right">
-                                {% for field in form.get_property_fields %}
-                                    {% include "oscar/partials/form_fields_inline.html" %}
-                                {% endfor %}
-                            </div>
-                        </div>
+                    {# TODO: Review this, is it needed? #}
+                        {# <div class="col-md-5"> #}
+                            {# <div class="form-assigned form-horizontal pull-right"> #}
+                                {# {% for field in form.get_property_fields %} #}
+                                    {# {% include "oscar/partials/form_fields_inline.html" %} #}
+                                {# {% endfor %} #}
+                            {# </div> #}
+                        {# </div>  #}
                     </div>
                 </div>
 
