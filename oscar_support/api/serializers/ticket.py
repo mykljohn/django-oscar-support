@@ -7,8 +7,10 @@ from oscarapi.utils import (
 )
 from oscar.core.loading import get_model
 
+Attachment = get_model('oscar_support', 'Attachment')
 Basket = get_model('basket', 'Basket')
 Line = get_model('order', 'Line')
+Message = get_model('oscar_support', 'Message')
 Order = get_model('order', 'Order')
 Product = get_model('catalogue', 'Product')
 Ticket = get_model('oscar_support', 'Ticket')
@@ -108,14 +110,28 @@ class TicketRelatedOrderSerializer(OscarModelSerializer):
 
 
 class TicketRelatedProductSerializer(OscarModelSerializer):
-    # order = serializers.StringRelatedField()
-    # partner = serializers.StringRelatedField()
-    # product = serializers.HyperlinkedRelatedField(view_name='product-detail', read_only=True)
-    # status = models.CharField()
 
     class Meta:
         model = Product
         fields = ['url', 'upc', 'title', 'rating']
+
+
+class TicketAttachmentSerializer(OscarModelSerializer):
+    user = serializers.HyperlinkedRelatedField(
+        view_name='user-detail', read_only=True, )
+
+    class Meta:
+        model = Attachment
+        fields = '__all__'
+
+
+class TicketMessageSerializer(OscarModelSerializer):
+    user = serializers.HyperlinkedRelatedField(
+        view_name='user-detail', read_only=True, )
+
+    class Meta:
+        model = Message
+        fields = '__all__'
 
 
 class TicketSerializer(OscarModelSerializer):
@@ -127,9 +143,11 @@ class TicketSerializer(OscarModelSerializer):
     assignee = serializers.StringRelatedField()
     priority = serializers.StringRelatedField(required=False)
     # parent = serializers.StringRelatedField()
+    attachments = TicketAttachmentSerializer(many=True, required=False, )
     related_lines = TicketRelatedLineSerializer(many=True, required=False, )  # TODO: Review it
     related_orders = TicketRelatedOrderSerializer(many=True, required=False, )
     related_products = TicketRelatedProductSerializer(many=True, required=False, )
+    messages = TicketMessageSerializer(many=True, required=False, )
 
     class Meta:
         model = Ticket
@@ -147,9 +165,11 @@ class TicketSerializer(OscarModelSerializer):
             'assigned_group',
             'assignee',
             'priority',
+            'attachments',
             'related_lines',
             'related_orders',
             'related_products',
+            'messages'
         ]
         # overridable('OSCARAPI_PRODUCTDETAIL_FIELDS', default=())
 
