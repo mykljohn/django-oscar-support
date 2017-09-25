@@ -111,25 +111,17 @@
                     </div>
                 </div>
 
-                {% if selected_ticket.attachments.all|length %}
                 <hr/>
                 {% include "oscar_support/dashboard/partials/attachments.html" with ticket=selected_ticket %}
-                {% endif %}
 
-                {% if selected_ticket.relatedorders.all|length %}
                 <hr/>
                 {% include "oscar_support/dashboard/partials/related_orders.html" with ticket=selected_ticket %}
-                {% endif %}
 
-                {% if selected_ticket.relatedorderlines.all|length %}
                 <hr/>
                 {% include "oscar_support/dashboard/partials/related_lines.html" with ticket=selected_ticket %}
-                {% endif %}
 
-                {% if selected_ticket.relatedproducts.all|length %}
                 <hr/>
                 {% include "oscar_support/dashboard/partials/related_products.html" with ticket=selected_ticket %}
-                {% endif %}
 
                 <hr/>
                 <div class="ticket-message">

@@ -1,10 +1,19 @@
 {% load i18n %}
 {% load currency_filters %}
 <div class="table-header">
-    <h3>{% trans "Attachment:" %} <a class="btn btn-default pull-right" data-toggle="collapse" data-target="#attachments">{% trans "Show/Hide" %}{{ order.number }}</a></h3>
+    <h3>
+        {% trans "Attachment:" %}
+        {# TODO: Add for this buttons a small margin: 0 2.5px, if is possible using the btn class #}
+        {% if ticket.attachments.all|length %}
+            <button type="button" class="btn btn-default pull-right" data-toggle="collapse"
+                    data-target="#attachments">{% trans "Show/Hide" %} {# TODO:  attachments.number #}</button>
+        {% endif %}
+        <button type="button" class="btn btn-primary pull-right">{% trans "Add" %}</button>
+    </h3>
 </div>
-{% for attachment in ticket.attachments.all %}
-    <div id="attachments" class="collapse in">
+{% if ticket.attachments.all|length %}
+    {% for attachment in ticket.attachments.all %}
+        <div id="attachments" class="collapse in">
             <table class="table table-bordered table-striped">
                 <tr>
                     <th>{% trans "File" %}</th>
@@ -14,4 +23,5 @@
                 </tr>
             </table>
         </div>
-{% endfor %}
+    {% endfor %}
+{% endif %}

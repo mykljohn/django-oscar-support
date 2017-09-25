@@ -2,34 +2,43 @@
 {% load currency_filters %}
 
 <div class="table-header">
-    <h3>{% trans "Related lines" %} <a class="btn btn-default pull-right" data-toggle="collapse" data-target="#related-lines">{% trans "Show/Hide" %}{{ order.number }}</a></h3>
+    <h3>
+        {% trans "Related lines" %}
+        {% if ticket.relatedorderlines.all|length %}
+            <button type="button" class="btn btn-default pull-right" data-toggle="collapse"
+                    data-target="#related-lines">{% trans "Show/Hide" %} {# TODO: lines.number  #}</button>
+        {% endif %}
+        <button type="button" class="btn btn-primary pull-right">{% trans "Add" %}</button>
+    </h3>
 </div>
-{% for rel_line in ticket.relatedorderlines.all %}
-    {% with line=rel_line.line %}
-        <div id="related-lines" class="collapse in">
-            <table class="table table-bordered table-striped">
-                <tr>
-                    <th>{% trans "Order number" %}</th>
-                    <th>{% trans "Quantity" %}</th>
-                    <th>{% trans "Product" %}</th>
-                    <th>{% trans "UPC" %}</th>
-                    <th>{% trans "Supplier" %}</th>
-                    <th>{% trans "Supplier SKU" %}</th>
-                    <th>{% trans "Price before discounts" %}</th>
-                    <th>{% trans "Date purchased" %}</th>
-                </tr>
-                <tr>
-                    <td>{{ line.order.number }}</td>
-                    <td>{{ line.quantity }}</td>
-                    <td>{{ line.title }}</td>
-                    <td>{{ line.upc }}</td>
+{% if ticket.relatedorderlines.all|length %}
+    {% for rel_line in ticket.relatedorderlines.all %}
+        {% with line=rel_line.line %}
+            <div id="related-lines" class="collapse in">
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th>{% trans "Order number" %}</th>
+                        <th>{% trans "Quantity" %}</th>
+                        <th>{% trans "Product" %}</th>
+                        <th>{% trans "UPC" %}</th>
+                        <th>{% trans "Supplier" %}</th>
+                        <th>{% trans "Supplier SKU" %}</th>
+                        <th>{% trans "Price before discounts" %}</th>
+                        <th>{% trans "Date purchased" %}</th>
+                    </tr>
+                    <tr>
+                        <td>{{ line.order.number }}</td>
+                        <td>{{ line.quantity }}</td>
+                        <td>{{ line.title }}</td>
+                        <td>{{ line.upc }}</td>
 
-                    <td>{{ line.partner_name }}</td>
-                    <td>{{ line.partner_sku }}</td>
-                    <td>{{ line.line_price_incl_tax|currency }}</td>
-                    <td>{{ line.order.date_placed|date:"jS M Y H:i" }}</td>
-                </tr>
-            </table>
-        </div>
-    {% endwith %}
-{% endfor %}
+                        <td>{{ line.partner_name }}</td>
+                        <td>{{ line.partner_sku }}</td>
+                        <td>{{ line.line_price_incl_tax|currency }}</td>
+                        <td>{{ line.order.date_placed|date:"jS M Y H:i" }}</td>
+                    </tr>
+                </table>
+            </div>
+        {% endwith %}
+    {% endfor %}
+{% endif %}

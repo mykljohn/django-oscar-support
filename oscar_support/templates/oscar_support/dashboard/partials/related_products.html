@@ -5,43 +5,49 @@
 <div class="table-header">
     <h3>
         {% trans "Related products:" %}
-        <a class="btn btn-default pull-right" data-toggle="collapse" data-target="#related-products">
-            {% trans "Show/Hide" %}{{ order.number }}
-        </a>
+        {% if ticket.relatedproducts.all|length %}
+            <button type="button" class="btn btn-default pull-right" data-toggle="collapse"
+                    data-target="#related-products">
+                {% trans "Show/Hide" %} {#  TODO: products.number #}
+            </button>
+        {% endif %}
+        <button type="button" class="btn btn-primary pull-right">{% trans "Add" %}</button>
     </h3>
 </div>
 
-{% for rel_product in ticket.relatedproducts.all %}
-    {% with product=rel_product.product %}
-        <div id="related-products" class="collapse in">
-            <table class="table table-bordered table-striped">
-                <tr>
-                    <th>{% trans "UPC" %}</th>
-                    <th colspan="2">{% trans "Title" %}</th>
-                    <th>{% trans "Product class" %}</th>
-                    <th>{% trans "Partner" %}</th>
-                    <th>{% trans "Partner SKU" %}</th>
-                    <th>{% trans "Price exc tax" %}</th>
-                    <th>{% trans "Number in stock" %}</th>
-                    <th>{% trans "Number allocated" %}</th>
-                </tr>
-                <tr>
-                    <td>{{ product.upc }}</td>
-                    <td>
-                        {% thumbnail product.primary_image.original "50x50" as img %}
-                            <img src="{{ img.url }}" />
-                        {% endthumbnail %}
-                    </td>
-                    <td>{{ product.title }}</td>
-                    <td>{{ product.product_class.name }}</td>
-                    <td>{{ product.stockrecords.get.partner.name|default:"-" }}</td>
+{% if ticket.relatedproducts.all|length %}
+    {% for rel_product in ticket.relatedproducts.all %}
+        {% with product=rel_product.product %}
+            <div id="related-products" class="collapse in">
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th>{% trans "UPC" %}</th>
+                        <th colspan="2">{% trans "Title" %}</th>
+                        <th>{% trans "Product class" %}</th>
+                        <th>{% trans "Partner" %}</th>
+                        <th>{% trans "Partner SKU" %}</th>
+                        <th>{% trans "Price exc tax" %}</th>
+                        <th>{% trans "Number in stock" %}</th>
+                        <th>{% trans "Number allocated" %}</th>
+                    </tr>
+                    <tr>
+                        <td>{{ product.upc }}</td>
+                        <td>
+                            {% thumbnail product.primary_image.original "50x50" as img %}
+                                <img src="{{ img.url }}"/>
+                            {% endthumbnail %}
+                        </td>
+                        <td>{{ product.title }}</td>
+                        <td>{{ product.product_class.name }}</td>
+                        <td>{{ product.stockrecords.get.partner.name|default:"-" }}</td>
 
-                    <td>{{ product.stockrecords.get.partner_sku|default:"-" }}</td>
-                    <td>{{ product.stockrecords.get.price_excl_tax|currency|default:"-" }}</td>
-                    <td>{{ product.stockrecords.get.num_in_stock|default:"-" }}</td>
-                    <td>{{ product.stockrecords.get.num_allocated|default:"0" }}</td>
-                </tr>
-            </table>
-        </div>
-    {% endwith %}
-{% endfor %}
+                        <td>{{ product.stockrecords.get.partner_sku|default:"-" }}</td>
+                        <td>{{ product.stockrecords.get.price_excl_tax|currency|default:"-" }}</td>
+                        <td>{{ product.stockrecords.get.num_in_stock|default:"-" }}</td>
+                        <td>{{ product.stockrecords.get.num_allocated|default:"0" }}</td>
+                    </tr>
+                </table>
+            </div>
+        {% endwith %}
+    {% endfor %}
+{% endif %}
