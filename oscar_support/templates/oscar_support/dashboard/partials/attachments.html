@@ -1,0 +1,17 @@
+{% load i18n %}
+{% load currency_filters %}
+<div class="table-header">
+    <h3>{% trans "Attachment:" %} <a class="btn btn-default pull-right" data-toggle="collapse" data-target="#attachments">{% trans "Show/Hide" %}{{ order.number }}</a></h3>
+</div>
+{% for attachment in ticket.attachments.all %}
+    <div id="attachments" class="collapse in">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th>{% trans "File" %}</th>
+                </tr>
+                <tr>
+                    <td><a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a></td>
+                </tr>
+            </table>
+        </div>
+{% endfor %}

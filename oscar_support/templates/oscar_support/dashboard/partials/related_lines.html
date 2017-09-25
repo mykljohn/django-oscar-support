@@ -4,7 +4,7 @@
 <div class="table-header">
     <h3>{% trans "Related lines" %} <a class="btn btn-default pull-right" data-toggle="collapse" data-target="#related-lines">{% trans "Show/Hide" %}{{ order.number }}</a></h3>
 </div>
-{% for rel_line in ticket.relatedlines.all %}
+{% for rel_line in ticket.relatedorderlines.all %}
     {% with line=rel_line.line %}
         <div id="related-lines" class="collapse in">
             <table class="table table-bordered table-striped">
