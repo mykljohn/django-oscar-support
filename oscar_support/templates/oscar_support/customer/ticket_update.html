@@ -25,6 +25,19 @@
                     <td>{{ ticket.assignee.get_full_name|default:"-" }}</td>
                 </tr>
 
+                {% with attachments=ticket.attachments.all %}
+                    {% if attachments|length %}
+                        <tr>
+                            <td colspan="4">
+                                {% trans "Attachment(s):" %}
+                                {% for attachment in attachments %}
+                                    <a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a>
+                                    {% if not forloop.last %},{% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endwith %}
                 {% with related_orders=ticket.relatedorders.all %}
                     {% if related_orders|length %}
                         <tr>

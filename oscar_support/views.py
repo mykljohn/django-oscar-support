@@ -9,6 +9,7 @@ from django.views.generic import (
 
 from oscar.core.loading import get_class
 from oscar.core.loading import get_model
+from oscar_support.forms.formsets import AttachmentFormSet
 
 from . import utils
 from .forms import TicketCreateForm
@@ -45,17 +46,31 @@ class TicketListView(PageTitleMixin, ListView):
 
 
 class TicketCreateView(PageTitleMixin, CreateView):
-    model = Ticket
-    form_class = TicketCreateForm
-    context_object_name = 'ticket'
-    template_name = 'oscar_support/customer/ticket_create.html'
     active_tab = 'support'
+    attachment_formset = AttachmentFormSet
+    context_object_name = 'ticket'
+    form_class = TicketCreateForm
+    model = Ticket
     page_title = _('Create a new ticket')
+    template_name = 'oscar_support/customer/ticket_create.html'
+
+    def __init__(self, *args, **kwargs):
+        super(TicketCreateView, self).__init__(*args, **kwargs)
+        self.formsets = {'attachment_formset': self.attachment_formset}
 
     def get_form_kwargs(self, **kwargs):
         kwargs = super(TicketCreateView, self).get_form_kwargs(**kwargs)
         kwargs['user'] = self.request.user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        ctx = super(TicketCreateView, self).get_context_data(**kwargs)
+        for ctx_name, formset_class in self.formsets.items():
+            if ctx_name not in ctx:
+                ctx[ctx_name] = formset_class(
+                                              self.request.user,
+                                              instance=self.object)
+        return ctx
 
     def get_success_url(self):
         return reverse("support:customer-ticket-list")
