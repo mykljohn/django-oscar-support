@@ -22,12 +22,12 @@ BaseAttachmentFormSet = inlineformset_factory(
 class AttachmentFormSet(BaseAttachmentFormSet):
     def __init__(self, user, *args, **kwargs):
         self.user = user
-
         super(AttachmentFormSet, self).__init__(*args, **kwargs)
 
     def _construct_form(self, i, **kwargs):
         kwargs['user'] = self.user
-        return super(AttachmentFormSet, self)._construct_form(i, **kwargs)
+        return super(AttachmentFormSet, self)._construct_form(
+            i, **kwargs)
 
 
 BaseRelatedOrderFormSet = inlineformset_factory(

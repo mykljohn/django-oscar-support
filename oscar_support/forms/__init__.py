@@ -20,7 +20,7 @@ class AttachmentForm(forms.ModelForm):
 
     class Meta:
         model = Attachment
-        fields = ['file']
+        fields = ['ticket', 'file', ]
 
 
 class RelatedOrderForm(forms.ModelForm):

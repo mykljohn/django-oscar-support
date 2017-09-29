@@ -1,5 +1,8 @@
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import (
     CreateView,
@@ -58,8 +61,23 @@ class TicketCreateView(PageTitleMixin, CreateView):
         super(TicketCreateView, self).__init__(*args, **kwargs)
         self.formsets = {'attachment_formset': self.attachment_formset}
 
+    """
+    def check_objects_or_redirect(self):
+        if self.creating and self.parent is not None:
+            is_valid, reason = self.parent.can_be_parent(give_reason=True)
+            if not is_valid:
+                messages.error(self.request, reason)
+                return redirect('support:customer-ticket-list')
+
+    
+    def get_queryset(self):
+        return filter_products(Ticket.objects.all(), self.request.user)
+    
+    """
+
     def get_form_kwargs(self, **kwargs):
         kwargs = super(TicketCreateView, self).get_form_kwargs(**kwargs)
+        # kwargs['parent'] = self.parent
         kwargs['user'] = self.request.user
         return kwargs
 
@@ -68,9 +86,63 @@ class TicketCreateView(PageTitleMixin, CreateView):
         for ctx_name, formset_class in self.formsets.items():
             if ctx_name not in ctx:
                 ctx[ctx_name] = formset_class(
-                                              self.request.user,
-                                              instance=self.object)
+                    self.request.user,
+                    instance=self.object
+                )
         return ctx
+
+    def process_all_forms(self, form):
+
+        if form.is_valid():
+            self.object = form.save()
+
+        formsets = {}
+        for ctx_name, formset_class in self.formsets.items():
+            formsets[ctx_name] = formset_class(
+                self.request.user,
+                self.request.POST,
+                self.request.FILES,
+                instance=self.object
+            )
+
+        is_valid = form.is_valid() and all(
+            [formset.is_valid() for formset in formsets.values()]
+        )
+
+        cross_form_validation_result = self.clean(form, formsets)
+        if is_valid and cross_form_validation_result:
+            return self.forms_valid(form, formsets)
+        else:
+            return self.forms_invalid(form, formsets)
+
+    form_valid = form_invalid = process_all_forms
+
+    def clean(self, form, formsets):
+
+        return True
+
+    def forms_valid(self, form, formsets):
+
+        self.object = form.save()
+
+        # Save formsets
+        for formset in formsets.values():
+            print(formset)
+            formset.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def forms_invalid(self, form, formsets):
+        # delete the temporary product again
+        if self.creating and self.object and self.object.pk is not None:
+            self.object.delete()
+            self.object = None
+
+        messages.error(self.request,
+                       _("Your submitted data was not valid - please "
+                         "correct the errors below"))
+        ctx = self.get_context_data(form=form, **formsets)
+        return self.render_to_response(ctx)
 
     def get_success_url(self):
         return reverse("support:customer-ticket-list")
