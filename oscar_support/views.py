@@ -48,7 +48,7 @@ class TicketListView(PageTitleMixin, ListView):
         return ctx
 
 
-class TicketCreateView(PageTitleMixin, CreateView):
+class TicketCreateView(PageTitleMixin, UpdateView):
     active_tab = 'support'
     attachment_formset = AttachmentFormSet
     context_object_name = 'ticket'
@@ -62,18 +62,32 @@ class TicketCreateView(PageTitleMixin, CreateView):
         self.formsets = {'attachment_formset': self.attachment_formset}
 
     """
+    TODO: Only apply for update view(creating and self.creating only apply for UpdateView)
+    
+    def dispatch(self, request, *args, **kwargs):
+        resp = super(ProductCreateUpdateView, self).dispatch(
+            request, *args, **kwargs)
+        return self.check_objects_or_redirect() or resp
+
     def check_objects_or_redirect(self):
         if self.creating and self.parent is not None:
             is_valid, reason = self.parent.can_be_parent(give_reason=True)
             if not is_valid:
                 messages.error(self.request, reason)
                 return redirect('support:customer-ticket-list')
-
     
     def get_queryset(self):
         return filter_products(Ticket.objects.all(), self.request.user)
-    
+        
     """
+
+    def get_object(self, queryset=None):
+        self.creating = 'pk' not in self.kwargs
+        if self.creating:
+            return None  # success
+        else:
+            ticket = super(TicketCreateView, self).get_object(queryset)
+            return ticket
 
     def get_form_kwargs(self, **kwargs):
         kwargs = super(TicketCreateView, self).get_form_kwargs(**kwargs)
@@ -93,7 +107,7 @@ class TicketCreateView(PageTitleMixin, CreateView):
 
     def process_all_forms(self, form):
 
-        if form.is_valid():
+        if self.creating and form.is_valid():
             self.object = form.save()
 
         formsets = {}
@@ -122,12 +136,14 @@ class TicketCreateView(PageTitleMixin, CreateView):
         return True
 
     def forms_valid(self, form, formsets):
-
-        self.object = form.save()
+        if self.creating:
+            pass
+        else:
+            # a just created product was already saved in process_all_forms()
+            self.object = form.save()
 
         # Save formsets
         for formset in formsets.values():
-            print(formset)
             formset.save()
 
         return HttpResponseRedirect(self.get_success_url())
@@ -138,9 +154,11 @@ class TicketCreateView(PageTitleMixin, CreateView):
             self.object.delete()
             self.object = None
 
-        messages.error(self.request,
-                       _("Your submitted data was not valid - please "
-                         "correct the errors below"))
+        messages.error(
+            self.request,
+            _("Your submitted data was not valid - please "
+              "correct the errors below")
+        )
         ctx = self.get_context_data(form=form, **formsets)
         return self.render_to_response(ctx)
 

@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
@@ -151,6 +152,13 @@ class AbstractTicket(ModificationTrackingMixin, BaseSupportModel):
 
     def __str__(self):
         return "Ticket #{0}".format(self.printable_number)
+
+    def get_absolute_url(self):
+        """
+        Return a product's absolute url
+        """
+        return reverse('support:customer-ticket-update',
+                       kwargs={'pk': self.uuid})
 
     class Meta:
         abstract = True
