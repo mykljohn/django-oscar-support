@@ -44,6 +44,9 @@ Longer-term direction:
   are then prioritized or re-assigned according to actions related to these
   SLAs.
 
+For to do:
+* Test and coverage for all features.
+* Improve styles: print only file name instead his path.
 
 Screenshots
 -----------

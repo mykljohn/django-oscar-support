@@ -116,7 +116,6 @@ class TicketUpdateView(TicketListMixin, generic.UpdateView):
         for ctx_name, formset_class in self.formsets.items():
             if ctx_name not in ctx:
                 ctx[ctx_name] = formset_class(
-                    # self.request.user,
                     self.object.requester,
                     instance=self.object
                 )
@@ -130,7 +129,6 @@ class TicketUpdateView(TicketListMixin, generic.UpdateView):
         formsets = {}
         for ctx_name, formset_class in self.formsets.items():
             formsets[ctx_name] = formset_class(
-                # self.request.user,
                 self.object.requester,
                 self.request.POST,
                 self.request.FILES,
@@ -181,4 +179,9 @@ class TicketUpdateView(TicketListMixin, generic.UpdateView):
         return self.render_to_response(ctx)
 
     def get_success_url(self):
+
+        messages.success(
+            self.request,
+            _("Successfully updated {0}.").format(self.object), extra_tags="safe noicon"
+        )
         return reverse("support-dashboard:ticket-list")
