@@ -314,7 +314,9 @@ class AbstractAttachment(ModificationTrackingMixin, BaseSupportModel):
     )
     file = models.FileField(
         upload_to="oscar_support/%Y/%m",
-        verbose_name=_("File")
+        verbose_name=_("File"),
+        help_text=_("Add documents that present important information to understand the problem, "
+                    "such as: invoices, catalogs, photos, orders, etc.")
     )
 
     def __str__(self):

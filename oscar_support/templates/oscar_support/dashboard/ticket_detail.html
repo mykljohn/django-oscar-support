@@ -26,7 +26,8 @@
 {% endblock %}
 
 {% block dashboard_content %}
-    <form id="ticket-update-form" data-ticket-id="{{ selected_ticket.uuid }}" enctype="multipart/form-data" method="post" action="."
+    <form id="ticket-update-form" data-ticket-id="{{ selected_ticket.uuid }}" enctype="multipart/form-data"
+          method="post" action="."
           class="form-stacked wysiwyg">
         {% csrf_token %}
 
@@ -92,7 +93,6 @@
                                     <p>
                                         {# TODO: Review add "type" label or change the styles for make it more visible #}
                                         <span class="label label-default">{{ selected_ticket.type.name }}</span>
-                                        <span class="label label-default">{{ selected_ticket.priority.name }}</span>
                                     </p>
 
                                     {% with requester=selected_ticket.requester %}
@@ -104,14 +104,11 @@
                                         </h3>
                                     {% endwith %}
                                 </div>
-                                {# TODO: Review this, is it needed? #}
-                                {# <div class="col-md-5"> #}
-                                {# <div class="form-assigned form-horizontal pull-right"> #}
-                                {# {% for field in form.get_property_fields %} #}
-                                {# {% include "oscar/partials/form_fields_inline.html" %} #}
-                                {# {% endfor %} #}
-                                {# </div> #}
-                                {# </div>  #}
+                                <div class="col-md-5">
+                                    {% for field in form.get_property_fields %}
+                                        {% include "oscar/dashboard/partials/form_field.html" %}
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
 
@@ -125,7 +122,7 @@
                         {% include "oscar_support/dashboard/partials/related_lines.html" with ticket=selected_ticket %}
 
                         <hr/>
-                        {%  include "oscar_support/dashboard/partials/related_products.html" with ticket=selected_ticket %}
+                        {% include "oscar_support/dashboard/partials/related_products.html" with ticket=selected_ticket %}
                         <hr/>
 
                         <div class="ticket-message">

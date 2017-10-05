@@ -58,6 +58,7 @@ class TicketCreateView(PageTitleMixin, UpdateView):
     template_name = 'oscar_support/customer/ticket_create.html'
 
     # TODO: Review this system for implements ticket children.
+    # TODO: Refine the view!
 
     def __init__(self, *args, **kwargs):
         super(TicketCreateView, self).__init__(*args, **kwargs)
