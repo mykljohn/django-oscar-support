@@ -8,12 +8,12 @@
 {% endblock %}
 
 {% block tabcontent %}
-    <form id="create-ticket-form" action="." method="post" class="form">
+    <form id="create-ticket-form" enctype="multipart/form-data" action="." method="post" class="form">
         {% csrf_token %}
 
         {% include "partials/form_fields.html" %}
 
-        {% block product_categories %}
+        {% block ticket_attachment %}
             <div class="tab-pane" id="ticket_attachment">
                 {% block ticket_attachment_content %}
                     <table class="table table-striped table-bordered form-inline">
@@ -29,7 +29,7 @@
                     </table>
                 {% endblock ticket_attachment_content %}
             </div>
-        {% endblock product_categories %}
+        {% endblock ticket_attachment %}
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">{% trans "Create ticket" %}</button>

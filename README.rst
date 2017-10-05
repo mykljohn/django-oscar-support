@@ -24,11 +24,11 @@ Currently it only allow very basic functionality such as:
 #. Reply to a customer with a message.
 #. Make a note on the ticket for internal use.
 #. Assign tickets to a staff user.
+#. Relating a ticket to products, orders or order lines(User case: only staff can do it, staff take al information from attached files (invoices for example))
+#. Allow file attachments
 
 Features currently in the making:
 
-#. Relating a ticket to products, orders or order lines
-#. Allow file attachments
 #. Integrate with Oscar's alert system to notify the user of new replies.
 #. Add templating for messages in the dashboard for quicker replies.
 

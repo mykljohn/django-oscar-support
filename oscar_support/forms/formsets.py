@@ -37,7 +37,13 @@ BaseRelatedOrderFormSet = inlineformset_factory(
 
 class RelatedOrderFormSet(BaseRelatedOrderFormSet):
     def __init__(self, user, *args, **kwargs):
+        self.user = user
         super(RelatedOrderFormSet, self).__init__(*args, **kwargs)
+
+    def _construct_form(self, i, **kwargs):
+        kwargs['user'] = self.user
+        return super(RelatedOrderFormSet, self)._construct_form(
+            i, **kwargs)
 
     def get_num_orders(self):
         num_orders = 0
@@ -56,17 +62,27 @@ BaseRelatedOrderLineFormSet = inlineformset_factory(
 
 
 class RelatedOrderLineFormSet(BaseRelatedOrderLineFormSet):
-    def __init__(self, product_class, user, *args, **kwargs):
-        # This function just exists to drop the extra arguments
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
         super(RelatedOrderLineFormSet, self).__init__(*args, **kwargs)
+
+    def _construct_form(self, i, **kwargs):
+        kwargs['user'] = self.user
+        return super(RelatedOrderLineFormSet, self)._construct_form(
+            i, **kwargs)
 
 
 BaseRelatedProductFormSet = inlineformset_factory(
-    Ticket, RelatedProduct, form=RelatedProductForm, extra=1,
+    Ticket, RelatedProduct, form=RelatedProductForm, extra=5,
     can_delete=True)
 
 
 class RelatedProductFormSet(BaseRelatedProductFormSet):
-    def __init__(self, product_class, user, *args, **kwargs):
-        # This function just exists to drop the extra arguments
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
         super(RelatedProductFormSet, self).__init__(*args, **kwargs)
+
+    def _construct_form(self, i, **kwargs):
+        kwargs['user'] = self.user
+        return super(RelatedProductFormSet, self)._construct_form(
+            i, **kwargs)
