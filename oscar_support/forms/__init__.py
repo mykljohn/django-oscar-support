@@ -22,36 +22,71 @@ class AttachmentForm(forms.ModelForm):
         model = Attachment
         fields = ['ticket', 'file', ]
 
+    def save(self, *args, **kwargs):
+        kwargs['commit'] = False
+        obj = super(AttachmentForm, self).save(*args, **kwargs)
+        obj.user = self.user
+        obj.save()
+        return obj
+
 
 class RelatedOrderForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
         super(RelatedOrderForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = RelatedOrder
         fields = ['order']
 
+    def save(self, *args, **kwargs):
+        kwargs['commit'] = False
+        obj = super(RelatedOrderForm, self).save(*args, **kwargs)
+        obj.user = self.user
+        obj.save()
+        return obj
+
 
 class RelatedOrderLineForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
         super(RelatedOrderLineForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = RelatedOrderLine
         fields = ['line']
 
+    def save(self, *args, **kwargs):
+        kwargs['commit'] = False
+        obj = super(RelatedOrderLineForm, self).save(*args, **kwargs)
+        obj.user = self.user
+        obj.save()
+        return obj
+
 
 class RelatedProductForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
         super(RelatedProductForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = RelatedProduct
         fields = ['product']
 
+    def save(self, *args, **kwargs):
+        kwargs['commit'] = False
+        obj = super(RelatedProductForm, self).save(*args, **kwargs)
+        obj.user = self.user
+        obj.save()
+        return obj
+
 
 class TicketUpdateForm(forms.ModelForm):
     message_text = forms.CharField(label=_("Message"), widget=forms.Textarea())
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(TicketUpdateForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = get_model("oscar_support", "Ticket")
@@ -63,15 +98,13 @@ class TicketCreateForm(forms.ModelForm):
         self.user = user
         super(TicketCreateForm, self).__init__(*args, **kwargs)
 
-    def save(self, commit=True):
-        instance = super(TicketCreateForm, self).save(commit=False)
-
-        instance.status = utils.TicketStatusGenerator.get_initial_status()
-        instance.requester = self.user
-
-        if commit:
-            instance.save()
-        return instance
+    def save(self, *args, **kwargs):
+        kwargs['commit'] = False
+        obj = super(TicketCreateForm, self).save(*args, **kwargs)
+        obj.status = utils.TicketStatusGenerator.get_initial_status()
+        obj.requester = self.user
+        obj.save()
+        return obj
 
     class Meta:
         model = get_model("oscar_support", "Ticket")
