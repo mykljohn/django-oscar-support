@@ -3,8 +3,8 @@ python:
   - "2.6"
   - "2.7"
 env:
-  - DJANGO_VERSION=">=1.4,<1.5" OSCAR_VERSION=">=0.6,<0.7"
-  - DJANGO_VERSION=">=1.5,<1.6" OSCAR_VERSION=">=0.6,<0.7"
+  - DJANGO_VERSION=">=1.8,<2.0" OSCAR_VERSION=">=1.3,<1.6"
+  - DJANGO_VERSION=">=1.8,<2.0" OSCAR_VERSION=">=1.3,<1.6"
 install:
   - pip install Django$DJANGO_VERSION django-oscar$OSCAR_VERSION
   - pip install .
