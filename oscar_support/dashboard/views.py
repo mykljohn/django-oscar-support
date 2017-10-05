@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect
@@ -5,6 +6,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.views import generic
 
 from oscar.core.loading import get_model
+from oscar_support.forms.formsets import (
+    AttachmentFormSet,
+    RelatedOrderFormSet,
+    RelatedOrderLineFormSet,
+    RelatedProductFormSet
+)
 
 from . import forms
 from .. import utils
@@ -46,7 +53,6 @@ class TicketListView(TicketListMixin, generic.ListView):
 
 
 class UserFormInlineMixin(object):
-
     def get_extra_form_kwargs(self):
         kwargs = super(UserFormInlineMixin, self).get_extra_form_kwargs()
         kwargs['user'] = self.request.user
@@ -87,16 +93,65 @@ class TicketUpdateView(TicketListMixin, generic.UpdateView):
     default_message_model = Message
     context_object_name = 'selected_ticket'
     form_class = forms.TicketUpdateForm
+    attachment_formset = AttachmentFormSet
+    related_order_formset = RelatedOrderFormSet
+    related_line_formset = RelatedOrderLineFormSet
+    related_product_formset = RelatedProductFormSet
     template_name = 'oscar_support/dashboard/ticket_detail.html'
+
+    def __init__(self, *args, **kwargs):
+        super(TicketUpdateView, self).__init__(*args, **kwargs)
+        self.formsets = {
+            'attachment_formset': self.attachment_formset,
+            'related_order_formset': RelatedOrderFormSet,
+            'related_line_formset': RelatedOrderLineFormSet,
+            'related_product_formset': RelatedProductFormSet,
+        }
 
     def get_context_data(self, **kwargs):
         ctx = super(TicketUpdateView, self).get_context_data(**kwargs)
         ticket_name = self.object
         ctx['ticket_list'] = self.get_ticket_list()
         ctx['title'] = _('Update {name}').format(name=ticket_name)
+        for ctx_name, formset_class in self.formsets.items():
+            if ctx_name not in ctx:
+                ctx[ctx_name] = formset_class(
+                    self.object.requester,
+                    instance=self.object
+                )
         return ctx
 
-    def form_valid(self, form):
+    def process_all_forms(self, form):
+
+        if form.is_valid():
+            self.object = form.save()
+
+        formsets = {}
+        for ctx_name, formset_class in self.formsets.items():
+            formsets[ctx_name] = formset_class(
+                self.object.requester,
+                self.request.POST,
+                self.request.FILES,
+                instance=self.object
+            )
+
+        is_valid = form.is_valid() and all(
+            [formset.is_valid() for formset in formsets.values()]
+        )
+
+        cross_form_validation_result = self.clean(form, formsets)
+        if is_valid and cross_form_validation_result:
+            return self.forms_valid(form, formsets)
+        else:
+            return self.forms_invalid(form, formsets)
+
+    form_valid = form_invalid = process_all_forms
+
+    def clean(self, form, formsets):
+
+        return True
+
+    def forms_valid(self, form, formsets):
         ticket = form.save()
         message_type = form.cleaned_data.get('message_type', Message.PUBLIC)
         message_text = form.cleaned_data.get('message_text')
@@ -106,7 +161,27 @@ class TicketUpdateView(TicketListMixin, generic.UpdateView):
             text=message_text,
             ticket=ticket
         )
+
+        # Save formsets
+        for formset in formsets.values():
+            formset.save()
+
         return HttpResponseRedirect(self.get_success_url())
 
+    def forms_invalid(self, form, formsets):
+
+        messages.error(
+            self.request,
+            _("Your submitted data was not valid - please "
+              "correct the errors below")
+        )
+        ctx = self.get_context_data(form=form, **formsets)
+        return self.render_to_response(ctx)
+
     def get_success_url(self):
+
+        messages.success(
+            self.request,
+            _("Successfully updated {0}.").format(self.object), extra_tags="safe noicon"
+        )
         return reverse("support-dashboard:ticket-list")

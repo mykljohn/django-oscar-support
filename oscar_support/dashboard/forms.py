@@ -89,6 +89,7 @@ class TicketUpdateForm(forms.ModelForm):
         required=False
     )
 
+    # TODO: This function, for what?
     def get_property_fields(self):
         for field in self:
             if not field.name.startswith('message'):
@@ -101,7 +102,14 @@ class TicketUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Ticket
-        fields = ['status', 'message_type', 'message_text']
+        fields = [
+            'status',
+            'priority',
+            'assignee',
+            'assigned_group',
+            'message_type',
+            'message_text'
+        ]
         widgets = {
             'status': forms.HiddenInput(),
         }

@@ -25,6 +25,19 @@
                     <td>{{ ticket.assignee.get_full_name|default:"-" }}</td>
                 </tr>
 
+                {% with attachments=ticket.attachments.all %}
+                    {% if attachments|length %}
+                        <tr>
+                            <td colspan="4">
+                                {% trans "Attachment(s):" %}
+                                {% for attachment in attachments %}
+                                    <a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a>
+                                    {% if not forloop.last %},{% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endwith %}
                 {% with related_orders=ticket.relatedorders.all %}
                     {% if related_orders|length %}
                         <tr>
@@ -41,7 +54,6 @@
                         </tr>
                     {% endif %}
                 {% endwith %}
-
                 {% with related_products=ticket.relatedproducts.all %}
                     {% if related_products|length %}
                         <tr>
@@ -68,8 +80,29 @@
         </div>
     </div>
 
-    <form id="add-message-form" action="." method="post" class="form">
+    <hr>
+
+    <form id="add-message-form" enctype="multipart/form-data" action="." method="post" class="form">
         {% csrf_token %}
+
+        {% block ticket_attachment %}
+            <div class="tab-pane" id="ticket_attachment">
+                {% block ticket_attachment_content %}
+                    <table class="table table-striped table-bordered form-inline">
+                        {{ attachment_formset.management_form }}
+                        {{ attachment_formset.non_form_errors }}
+                        {% for attachment_form in attachment_formset %}
+                            <tr>
+                                <td>
+                                    {% include "dashboard/partials/form_fields_inline.html" with form=attachment_form %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endblock ticket_attachment_content %}
+            </div>
+        {% endblock ticket_attachment %}
+
         {% include "partials/form_fields.html" %}
 
         <div class="form-actions">

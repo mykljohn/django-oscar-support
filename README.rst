@@ -24,11 +24,11 @@ Currently it only allow very basic functionality such as:
 #. Reply to a customer with a message.
 #. Make a note on the ticket for internal use.
 #. Assign tickets to a staff user.
+#. Relating a ticket to products, orders or order lines(User case: only staff can do it, staff take al information from attached files (invoices for example))
+#. Allow file attachments
 
 Features currently in the making:
 
-#. Relating a ticket to products, orders or order lines
-#. Allow file attachments
 #. Integrate with Oscar's alert system to notify the user of new replies.
 #. Add templating for messages in the dashboard for quicker replies.
 
@@ -44,6 +44,9 @@ Longer-term direction:
   are then prioritized or re-assigned according to actions related to these
   SLAs.
 
+For to do:
+* Test and coverage for all features.
+* Improve styles: print only file name instead his path.
 
 Screenshots
 -----------
