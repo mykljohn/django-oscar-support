@@ -1,8 +1,6 @@
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import (
     CreateView,

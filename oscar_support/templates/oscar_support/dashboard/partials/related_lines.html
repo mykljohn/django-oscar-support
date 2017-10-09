@@ -4,11 +4,9 @@
 <div class="table-header">
     <h3>
         {% trans "Related lines" %}
-        {% if ticket.relatedorderlines.all|length %}
-            <button type="button" class="btn btn-default pull-right" data-toggle="collapse"
-                    data-target="#related-lines">{% trans "Show/Hide" %} {{ ticket.relatedorderlines.all|length }}
-            </button>
-        {% endif %}
+        <button type="button" class="btn btn-default pull-right" data-toggle="collapse"
+                data-target="#related-lines">{% trans "Show/Hide" %} {{ ticket.relatedorderlines.all|length }}
+        </button>
     </h3>
 </div>
 

@@ -3,10 +3,9 @@
 <div class="table-header">
     <h3>
         {% trans "Attachment:" %}
-        {% if ticket.attachments.all|length %}
-            <button type="button" class="btn btn-default pull-right" data-toggle="collapse"
-                    data-target="#attachments">{% trans "Show/Hide" %} {{ ticket.attachments.all|length }}</button>
-        {% endif %}
+        <button type="button" class="btn btn-default pull-right" data-toggle="collapse"
+                data-target="#attachments">{% trans "Show/Hide" %} {{ ticket.attachments.all|length }}
+        </button>
     </h3>
 </div>
 

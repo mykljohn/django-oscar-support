@@ -10,7 +10,6 @@ Order = get_model('order', 'Order')
 RelatedOrder = get_model("oscar_support", "RelatedOrder")
 RelatedOrderLine = get_model("oscar_support", "RelatedOrderLine")
 RelatedProduct = get_model("oscar_support", "RelatedProduct")
-TicketStatus = get_model("oscar_support", "TicketStatus")
 
 
 class AttachmentForm(forms.ModelForm):

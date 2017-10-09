@@ -4,11 +4,9 @@
 <div class="table-header">
     <h3>
         {% trans "Related orders:" %}
-        {% if ticket.relatedorders.all|length %}
-            <button type="button" class="btn btn-default pull-right" data-toggle="collapse"
-                    data-target="#related-orders">{% trans "Show/Hide" %} {{ ticket.relatedorders.all|length }}
-            </button>
-        {% endif %}
+        <button type="button" class="btn btn-default pull-right" data-toggle="collapse"
+                data-target="#related-orders">{% trans "Show/Hide" %} {{ ticket.relatedorders.all|length }}
+        </button>
     </h3>
 </div>
 {% block ticket_order %}

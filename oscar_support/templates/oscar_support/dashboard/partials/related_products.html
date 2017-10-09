@@ -5,12 +5,10 @@
 <div class="table-header">
     <h3>
         {% trans "Related products:" %}
-        {% if ticket.relatedproducts.all|length %}
-            <button type="button" class="btn btn-default pull-right" data-toggle="collapse"
-                    data-target="#related-products">
-                {% trans "Show/Hide" %} {{ ticket.relatedproducts.all|length }}
-            </button>
-        {% endif %}
+        <button type="button" class="btn btn-default pull-right" data-toggle="collapse"
+                data-target="#related-products">
+            {% trans "Show/Hide" %} {{ ticket.relatedproducts.all|length }}
+        </button>
     </h3>
 </div>
 

@@ -1,0 +1,32 @@
+{% extends 'dashboard/layout.html' %}
+{% load category_tags %}
+{% load i18n %}
+
+{% block body_class %}{{ block.super }} tags{% endblock %}
+
+{% block title %}
+    {% trans "Support tags" %} | {{ block.super }}
+{% endblock %}
+
+{% block headertext %}
+    {% trans "Support tags" %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
+        </li>
+        <li class="active">
+            <a href="{% url 'support-dashboard:tag-list' %}">{% trans "Support tags" %}</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block dashboard_content %}
+    {% include "oscar_support/dashboard/partials/inline_tag.html" with title="Types" id="ticket-type" count=type_count tag_formset=ticket_type_formset %}
+
+    {% include "oscar_support/dashboard/partials/inline_tag.html" with title="Statuses" id="ticket-status" count=status_count tag_formset=ticket_status_formset %}
+
+    {% include "oscar_support/dashboard/partials/inline_tag.html" with title="Priorities" id="ticket-priority" count=priority_count tag_formset=priority_formset %}
+{% endblock dashboard_content %}

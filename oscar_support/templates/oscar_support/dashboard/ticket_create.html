@@ -12,11 +12,6 @@
     {% trans "New ticket" %}
 {% endblock %}
 
-{% block extrahead %}
-    {{ block.super }}
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
-{% endblock %}
-
 {% block breadcrumbs %}
     <ul class="breadcrumb">
         <li>
@@ -63,7 +58,7 @@
                         <div class="container-fluid panel-body">
                             {% for field in form.get_property_fields %}
                                 <div class="col-md-3">
-                                    {% include "oscar/dashboard/partials/form_field.html" %}
+                                    {% include "oscar/dashboard/partials/form_field.html" with field=field %}
                                 </div>
                             {% endfor %}
                         </div>
@@ -72,7 +67,7 @@
                     <div class="panel panel-default">
                         <div class="container-fluid panel-body">
                             {% for field in form.get_message_fields %}
-                                {% include "oscar/dashboard/partials/form_field.html" %}
+                                {% include "oscar/dashboard/partials/form_field.html" with field=field %}
                             {% endfor %}
                         </div>
                     </div>
@@ -129,9 +124,4 @@
             </form>
         </div>
     </div>
-{% endblock %}
-
-{% block onbodyload %}
-    {{ block.super }}
-    support.dashboard.initAutoComplete();
 {% endblock %}

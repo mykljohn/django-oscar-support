@@ -98,7 +98,9 @@ class AbstractTicket(ModificationTrackingMixin, BaseSupportModel):
 
     # main content of the (initial) ticket
     subject = models.CharField(_("Subject"), max_length=255)
-    body = models.TextField(_("Body"))
+    body = models.TextField(_("Body"), blank=True) 
+    # TODO: In CreateForm in dashboard JS give us: An invalid form control with name='body' is not focusable,
+    # for avoid it was needed make BODY unrequired, putting "black=true" property. It doesn't happen in customer view.
 
     priority = models.ForeignKey(
         'Priority',

@@ -10,15 +10,20 @@ from oscar_support.forms.formsets import (
     AttachmentFormSet,
     RelatedOrderFormSet,
     RelatedOrderLineFormSet,
-    RelatedProductFormSet
+    RelatedProductFormSet,
+    PriorityFormSet,
+    TicketStatusFormSet,
+    TicketTypeFormSet
 )
 
 from . import forms
 from .. import utils
 
-Ticket = get_model('oscar_support', 'Ticket')
 Message = get_model('oscar_support', 'Message')
+Priority = get_model("oscar_support", "Priority")
+Ticket = get_model('oscar_support', 'Ticket')
 TicketStatus = get_model('oscar_support', 'TicketStatus')
+TicketType = get_model("oscar_support", "TicketType")
 
 
 class TicketListMixin(object):
@@ -103,9 +108,9 @@ class TicketUpdateView(TicketListMixin, generic.UpdateView):
         super(TicketUpdateView, self).__init__(*args, **kwargs)
         self.formsets = {
             'attachment_formset': self.attachment_formset,
-            'related_order_formset': RelatedOrderFormSet,
-            'related_line_formset': RelatedOrderLineFormSet,
-            'related_product_formset': RelatedProductFormSet,
+            'related_order_formset': self.related_order_formset,
+            'related_line_formset': self.related_line_formset,
+            'related_product_formset': self.related_product_formset,
         }
 
     def get_context_data(self, **kwargs):
@@ -185,3 +190,81 @@ class TicketUpdateView(TicketListMixin, generic.UpdateView):
             _("Successfully updated {0}.").format(self.object), extra_tags="safe noicon"
         )
         return reverse("support-dashboard:ticket-list")
+
+
+class TagListView(generic.ListView):
+    model = Priority
+    priority_formset = PriorityFormSet
+    ticket_status_formset = TicketStatusFormSet
+    ticket_type_formset = TicketTypeFormSet
+    template_name = 'oscar_support/dashboard/tag_list.html'
+
+    def __init__(self, *args, **kwargs):
+        super(TagListView, self).__init__(*args, **kwargs)
+        self.formsets = {
+            'priority_formset': self.priority_formset,
+            'ticket_status_formset': self.ticket_status_formset,
+            'ticket_type_formset': self.ticket_type_formset,
+        }
+
+    def get_context_data(self, **kwargs):
+        ctx = super(TagListView, self).get_context_data(**kwargs)
+        ctx['type_count'] = TicketType.objects.all().count()
+        ctx['status_count'] = TicketStatus.objects.all().count()
+        ctx['priority_count'] = Priority.objects.all().count()
+        for ctx_name, formset_class in self.formsets.items():
+            if ctx_name not in ctx:
+                ctx[ctx_name] = formset_class(
+                    self.request.POST,
+                    # instance=instance
+                )
+        return ctx
+
+    def process_all_forms(self):
+
+        formsets = {}
+        for ctx_name, formset_class in self.formsets.items():
+            formsets[ctx_name] = formset_class(
+                self.request.POST,
+                # instance=self.object
+            )
+
+        is_valid = all(
+            [formset.is_valid() for formset in formsets.values()]
+        )
+
+        cross_form_validation_result = self.clean(formsets)
+        if is_valid and cross_form_validation_result:
+            return self.forms_valid(formsets)
+        else:
+            return self.forms_invalid(formsets)
+
+    form_valid = form_invalid = process_all_forms
+
+    def clean(self, form, formsets):
+
+        return True
+
+    def forms_valid(self, form, formsets):
+        for formset in formsets.values():
+            formset.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def forms_invalid(self, form, formsets):
+
+        messages.error(
+            self.request,
+            _("Your submitted data was not valid - please "
+              "correct the errors below")
+        )
+        ctx = self.get_context_data(form=form, **formsets)
+        return self.render_to_response(ctx)
+
+    def get_success_url(self):
+
+        messages.success(
+            self.request,
+            _("Successfully updated {0}.").format(self.object), extra_tags="safe noicon"
+        )
+        return reverse("support-dashboard:tag-list")

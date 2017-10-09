@@ -45,8 +45,10 @@ Longer-term direction:
   SLAs.
 
 For to do:
+
 * Test and coverage for all features.
 * Improve styles: print only file name instead his path.
+* Not all changes in the forms have to make a new messages.
 
 Screenshots
 -----------

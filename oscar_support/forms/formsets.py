@@ -1,18 +1,28 @@
+from django.forms import formset_factory, modelformset_factory
 from django.forms import inlineformset_factory
 from oscar.core.loading import get_model
+from oscar_support.dashboard.forms import (
+    PriorityForm,
+    TicketStatusForm,
+    TicketTypeForm
+)
+
 from oscar_support.forms import (
     AttachmentForm,
     RelatedOrderForm,
     RelatedOrderLineForm,
-    RelatedProductForm
+    RelatedProductForm,
 )
 
 Attachment = get_model('oscar_support', 'Attachment')
 Order = get_model('order', 'Order')
 RelatedOrder = get_model("oscar_support", "RelatedOrder")
+Priority = get_model("oscar_support", "Priority")
 RelatedOrderLine = get_model("oscar_support", "RelatedOrderLine")
 RelatedProduct = get_model("oscar_support", "RelatedProduct")
 Ticket = get_model("oscar_support", "Ticket")
+TicketStatus = get_model("oscar_support", "TicketStatus")
+TicketType = get_model("oscar_support", "TicketType")
 
 BaseAttachmentFormSet = inlineformset_factory(
     Ticket, Attachment, form=AttachmentForm, extra=2,
@@ -86,3 +96,13 @@ class RelatedProductFormSet(BaseRelatedProductFormSet):
         kwargs['user'] = self.user
         return super(RelatedProductFormSet, self)._construct_form(
             i, **kwargs)
+
+
+# PriorityFormSet = formset_factory(PriorityForm, extra=5, can_delete=True)
+PriorityFormSet = modelformset_factory(Priority, form=PriorityForm, extra=3, can_delete=True)
+
+# TicketStatusFormSet = formset_factory(TicketStatusForm, extra=3, can_delete=True)
+TicketStatusFormSet = modelformset_factory(TicketStatus, form=TicketStatusForm, extra=3, can_delete=True)
+
+# TicketTypeFormSet = formset_factory(TicketTypeForm, extra=3, can_delete=True)
+TicketTypeFormSet = modelformset_factory(TicketType, form=TicketTypeForm, extra=3, can_delete=True)

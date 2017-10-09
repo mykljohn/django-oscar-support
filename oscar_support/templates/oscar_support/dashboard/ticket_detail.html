@@ -13,6 +13,15 @@
     {% trans "Support tickets" %}
 {% endblock %}
 
+{% block extrastyles %}
+    {{ block.super }}
+    <style>
+        .fixed-actions .form-group {
+            margin-bottom: 0.938rem;
+        }
+    </style>
+{% endblock %}
+
 {% block breadcrumbs %}
     <ul class="breadcrumb">
         <li>
@@ -28,7 +37,7 @@
 {% block dashboard_content %}
     <form id="ticket-update-form" data-ticket-id="{{ selected_ticket.uuid }}" enctype="multipart/form-data"
           method="post" action="."
-          class="form-stacked wysiwyg">
+          class="form-stacked wysiwyg fixed-actions">
         {% csrf_token %}
 
         <div class='container-fluid'>
@@ -53,7 +62,14 @@
                 <div class="tab-content">
                     <div id="recent-tickets" class="tab-pane active">
                         {% for ticket in ticket_list %}
-                            <div class="panel panel-default {% if ticket.uuid == selected_ticket.uuid %}active{% endif %}">
+                            <div class="panel panel-{% if ticket.uuid == selected_ticket.uuid %}info{% else %}default{% endif %}">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        {% blocktrans with number=ticket.printable_number subject=ticket.subject|truncatechars:30 %}
+                                            <strong>Ticket #{{ number }}:</strong> {{ subject }}<br/>
+                                        {% endblocktrans %}
+                                    </h3>
+                                </div>
                                 <div class="panel-body">
                                     <a href="{% url 'support-dashboard:ticket-update' ticket.uuid %}"
                                        class="btn {% if ticket.uuid == selected_ticket.uuid %}btn-primary{% else %}btn-default{% endif %} pull-right">
@@ -61,9 +77,6 @@
                                     </a>
                                     <p>
                                         <span class="label label-default">{{ ticket.status.name }}</span>
-                                        {% blocktrans with number=ticket.printable_number subject=ticket.subject|truncatechars:30 %}
-                                            <strong>Ticket #{{ number }}:</strong> {{ subject }}<br/>
-                                        {% endblocktrans %}
                                         <span class="label label-default">{{ ticket.type.name }}</span><br/>
                                         <strong>{% trans "Last modified:" %}</strong> {{ ticket.date_updated|date:"jS M Y H:i" }}
                                     </p>
@@ -81,18 +94,20 @@
                 <div class="content-block">
                     {% if selected_ticket %}
                         <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3>
+                                    <span class="label label-default">{{ selected_ticket.status.name }}</span>
+                                    <strong>
+                                        {% trans "Ticket #" %}{{ selected_ticket.printable_number }}: {{ selected_ticket.subject|truncatechars:30 }}
+                                    </strong>
+                                </h3>
+                            </div>
                             <div class="container-fluid panel-body">
                                 <div class="col-md-7">
-                                    <strong>{% trans "Last updated:" %}</strong> {{ selected_ticket.date_updated|date:"jS M Y H:i" }}
-                                    <br/>
-                                    <h3>
-                                        <span class="label label-default">{{ selected_ticket.status.name }}</span>
-                                        <strong>
-                                            {% trans "Ticket #" %}{{ selected_ticket.printable_number }}: {{ selected_ticket.subject|truncatechars:30 }}</strong>
-                                    </h3>
                                     <p>
                                         {# TODO: Review add "type" label or change the styles for make it more visible #}
                                         <span class="label label-default">{{ selected_ticket.type.name }}</span>
+                                        <strong>{% trans "Last updated:" %}</strong> {{ selected_ticket.date_updated|date:"jS M Y H:i" }}
                                     </p>
 
                                     {% with requester=selected_ticket.requester %}
@@ -143,40 +158,51 @@
                         <div class="ticket-list ticket-messages">
                             {% get_messages selected_ticket as selected_ticket_messages %}
                             {% for msg in selected_ticket_messages %}
-                                <div class="well {% if msg.is_internal %}internal-message{% endif %}">
-                                    <ul>
-                                        <li>
+                                <div class="panel panel-{% if msg.is_internal %}info{% else %}default{% endif %}">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
                                             <strong>
-                                                {% if msg.is_internal %}{% trans "Internal note from:" %}{% else %}
-                                                    {% trans "From:" %}{% endif %}
+                                                {% if msg.is_internal %}
+                                                    {% trans "Internal note from:" %}
+                                                {% else %}
+                                                    {% trans "From:" %}
+                                                {% endif %}
                                             </strong>
-                                            {{ msg.user.get_fullname|default:msg.user.email }}
-                                        </li>
-                                        <li>
-                                            <strong>Updated:</strong> {{ msg.date_created|date:"jS M Y H:i" }}
-                                        </li>
-                                    </ul>
-                                    <p>{{ msg.text|safe }}</p>
+                                        </h3>
+                                        {{ msg.user.get_fullname|default:msg.user.email }},
+                                        <strong>Updated:</strong> {{ msg.date_created|date:"jS M Y H:i" }}
+                                    </div>
+                                    <div class="panel-body">
+                                        <p>{{ msg.text|safe }}</p>
+                                    </div>
                                 </div>
                             {% endfor %}
 
-                            <div class="well">
-                                <p>
-                                    <strong>From:</strong> {{ selected_ticket.requester.get_fullname|default:selected_ticket.requester.email }}, {{ selected_ticket.date_created|date:"jS M Y H:i" }}
-                                </p>
-                                {{ selected_ticket.body|safe }}
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        <strong>{% trans "From:" %}</strong>
+                                    </h3>
+                                    {{ selected_ticket.requester.get_fullname|default:selected_ticket.requester.email }}, {{ selected_ticket.date_created|date:"jS M Y H:i" }}
+                                </div>
+                                <div class="panel-body">
+                                    <p>
+                                        {{ selected_ticket.body|safe }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="form-actions">
-                            <a href="{% url 'support-dashboard:ticket-list' %}" class="btn">{% trans "cancel" %}</a>
-                            <div class="pull-right">
-                                {% include "oscar_support/dashboard/partials/save_with_status.html" with ticket=selected_ticket %}
+                        <div class="fixed-actions-group">
+                            <div class="form-actions">
+                                <a href="{% url 'support-dashboard:ticket-list' %}" class="btn">{% trans "cancel" %}</a>
+                                <div class="pull-right">
+                                    {% include "oscar_support/dashboard/partials/save_with_status.html" with ticket=selected_ticket %}
+                                </div>
                             </div>
                         </div>
 
                     {% else %}
-                        <div class="well well-blank">
+                        <div class="well">
                             <p>{% trans 'Click on an individual ticket on the left to view or edit it. If you want to update or merge multiple tickets, select more than one.' %}</p>
                         </div>
                     {% endif %}
@@ -185,9 +211,4 @@
 
         </div>
     </form>
-{% endblock %}
-
-{% block onbodyload %}
-    {{ block.super }}
-    support.dashboard.initAutoComplete();
 {% endblock %}
