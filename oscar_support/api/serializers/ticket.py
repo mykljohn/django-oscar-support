@@ -1,11 +1,13 @@
 from rest_framework import serializers
 
+from oscar.core.compat import get_user_model
+from oscar.core.loading import get_model
+
 from oscarapi.utils import (
     OscarModelSerializer,
     overridable,
     OscarHyperlinkedModelSerializer
 )
-from oscar.core.loading import get_model
 
 Attachment = get_model('oscar_support', 'Attachment')
 Basket = get_model('basket', 'Basket')
@@ -16,6 +18,23 @@ Product = get_model('catalogue', 'Product')
 Ticket = get_model('oscar_support', 'Ticket')
 TicketStatus = get_model('oscar_support', 'TicketStatus')
 TicketType = get_model('oscar_support', 'TicketType')
+
+
+class UserSerializer(serializers.ModelSerializer):
+    display_text = serializers.SerializerMethodField('get_display_text')
+
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'email', 'first_name', 'last_name', 'display_text')
+
+    def get_display_text(self, obj):
+        if not obj:
+            return ''
+        full_name = obj.get_full_name()
+        if full_name:
+            return "{0} <{1}>".format(full_name, obj.email)
+        return obj.email
+
 
 """
 class PartnerSerializer(OscarModelSerializer):
@@ -110,7 +129,6 @@ class TicketRelatedOrderSerializer(OscarModelSerializer):
 
 
 class TicketRelatedProductSerializer(OscarModelSerializer):
-
     class Meta:
         model = Product
         fields = ['url', 'upc', 'title', 'rating']
@@ -191,3 +209,22 @@ class AddProductSerializer(serializers.Serializer):
     class Meta:
         model = Product
 """
+
+
+class AddTicketSerializer(serializers.HyperlinkedModelSerializer):
+    requester = serializers.StringRelatedField()  # TODO: It need be hyperlinked
+    type = serializers.StringRelatedField()
+    attachments = TicketAttachmentSerializer(many=True, required=False, )
+
+    class Meta:
+        model = Ticket
+        fields = [
+            'type',
+            'subject',
+            'requester',
+            'body',
+            'attachments',
+        ]
+
+    def create(self, validated_data):
+        return Ticket.objects.create(**validated_data)

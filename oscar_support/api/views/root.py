@@ -9,10 +9,16 @@ from rest_framework.reverse import reverse
 __all__ = ('api_root',)
 
 
-def PROTECTED_SUPPORT_APIS(r, f):
+def PUBLIC_SUPPORT_APIS(r, f):
     return [
         ('tickets', reverse('ticket-list', request=r, format=f)),
+        ('add-ticket', reverse('ticket-add-ticket', request=r, format=f)),
+        # ('update-ticket', reverse('ticket-update-ticket', request=r, format=f)),
     ]
+
+
+def PROTECTED_SUPPORT_APIS(r, f):
+    return []
 
 
 @api_view(('GET',))
@@ -24,6 +30,7 @@ def api_root(request, format=None):
     them all.
     """
     apis = PUBLIC_APIS(request, format)
+    apis += PUBLIC_SUPPORT_APIS(request, format)
     if request.user.is_staff:
         apis += PROTECTED_APIS(request, format)
         apis += PROTECTED_SUPPORT_APIS(request, format)
