@@ -60,7 +60,6 @@ class TicketUpdateForm(forms.ModelForm):
         required=False
     )
 
-    # TODO: This function, for what?
     def get_property_fields(self):
         for field in self:
             if not field.name.startswith('message'):
