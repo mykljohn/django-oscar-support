@@ -1,28 +1,21 @@
-from django.conf import settings
-from django.conf.urls import url, patterns, include
-
-from rest_framework import routers
+import django
+from django.conf.urls import url
+from rest_framework.urlpatterns import format_suffix_patterns
 
 from . import views
 
+urlpatterns = [
+    # url(r'^', include(router.urls, namespace='support-api')),
+    url(r'^$', views.api_root, name='support-api'),
+    url(r'^tickets/$', views.TicketList.as_view(), name='ticket-list'),
+    url(r'^tickets/(?P<pk>[a-zA-Z0-9]+)/$', views.TicketDetail.as_view(), name='ticket-detail'),
+    url(r'^ticket/add-ticket/$', views.AddTicketView.as_view(), name='ticket-add-ticket'),
+    # url(r'^ticket/update-ticket/$', views.UpdateTicketView.as_view(), name='ticket-update-ticket'),
+]
 
-router = routers.DefaultRouter()
-router.register(r'customers', views.CustomerViewSet, base_name="customer")
-router.register(r'agents', views.AgentViewSet, base_name="agent")
-router.register(r'groups', views.GroupViewSet, base_name="group")
+urlpatterns = format_suffix_patterns(urlpatterns)
 
+if django.VERSION[:2] < (1, 8):
+    from django.conf.urls import patterns
 
-urlpatterns = patterns(
-    '',
-    url(r'^', include(router.urls, namespace='support-api')),
-)
-
-
-if settings.DEBUG:
-    urlpatterns = urlpatterns + patterns(
-        '',
-        url(
-            r'^api-auth/',
-            include('rest_framework.urls', namespace='rest_framework')
-        ),
-    )
+    urlpatterns = patterns('', *urlpatterns)

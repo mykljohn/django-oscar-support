@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
@@ -97,7 +98,9 @@ class AbstractTicket(ModificationTrackingMixin, BaseSupportModel):
 
     # main content of the (initial) ticket
     subject = models.CharField(_("Subject"), max_length=255)
-    body = models.TextField(_("Body"))
+    body = models.TextField(_("Body"), blank=True)
+    # TODO: In CreateForm in dashboard JS give us: An invalid form control with name='body' is not focusable,
+    # for avoid it was needed make BODY unrequired, putting "black=true" property. It doesn't happen in customer view.
 
     priority = models.ForeignKey(
         'Priority',
@@ -150,7 +153,14 @@ class AbstractTicket(ModificationTrackingMixin, BaseSupportModel):
         return super(AbstractTicket, self).save(*args, **kwargs)
 
     def __str__(self):
-        return "Ticket #{0}".format(self.printable_number)
+        return _("Ticket #{0}").format(self.printable_number)
+
+    def get_absolute_url(self):
+        """
+        Return a product's absolute url
+        """
+        return reverse('support:customer-ticket-update',
+                       kwargs={'pk': self.uuid})
 
     class Meta:
         abstract = True
@@ -208,7 +218,7 @@ class AbstractMessage(ModificationTrackingMixin, BaseSupportModel):
         return self.type == self.INTERNAL
 
     def __str__(self):
-        return "{0} from {1} for {2}".format(
+        return _("{0} from {1} for {2}").format(
             self.type,
             self.user.email,
             self.ticket
@@ -235,7 +245,7 @@ class AbstractRelatedItem(ModificationTrackingMixin, BaseSupportModel):
     )
 
     def __str__(self):
-        return "{0} related to {1}".format(self.ticket, self.user)
+        return _("{0} related to {1}").format(self.ticket, self.user)
 
     class Meta:
         abstract = True
@@ -250,7 +260,7 @@ class AbstractRelatedOrderLine(AbstractRelatedItem):
     )
 
     def __str__(self):
-        return "{0} related to {1}".format(self.line, self.ticket)
+        return _("{0} related to {1}").format(self.line, self.ticket)
 
     class Meta:
         abstract = True
@@ -267,7 +277,7 @@ class AbstractRelatedOrder(AbstractRelatedItem):
     )
 
     def __str__(self):
-        return "{0} related to {1}".format(self.order, self.ticket)
+        return _("{0} related to {1}").format(self.order, self.ticket)
 
     class Meta:
         abstract = True
@@ -284,7 +294,7 @@ class AbstractRelatedProduct(AbstractRelatedItem):
     )
 
     def __str__(self):
-        return "{0} related to {1}".format(self.product, self.ticket)
+        return _("{0} related to {1}").format(self.product, self.ticket)
 
     class Meta:
         abstract = True
@@ -306,11 +316,13 @@ class AbstractAttachment(ModificationTrackingMixin, BaseSupportModel):
     )
     file = models.FileField(
         upload_to="oscar_support/%Y/%m",
-        verbose_name=_("File")
+        verbose_name=_("File"),
+        help_text=_("Add documents that present important information to understand the problem, "
+                    "such as: invoices, catalogs, photos, orders, etc.")
     )
 
     def __str__(self):
-        return "{0} attached to {1}".format(self.file.url, self.ticket)
+        return _("{0} attached to {1}").format(self.file.url, self.ticket)
 
     class Meta:
         abstract = True

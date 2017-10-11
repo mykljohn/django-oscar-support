@@ -60,7 +60,7 @@ by adding the following line into your ``urls.py`` file::
 	url(r'^dashboard/support/', include(support_dashboard.urls)),
         url(r'^', include(shop.urls)),  # Oscar's URL patterns
         url(r'', include(support.urls)),
-    	# TODO: url(r'^api/', include(api_urls)),
+    	url(r'^api/', include(support_api.urls)), # You can use instead Oscar api urls
         ...
     ]
 
