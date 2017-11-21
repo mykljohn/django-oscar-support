@@ -214,10 +214,7 @@ class TagListView(generic.ListView):
         ctx['priority_count'] = Priority.objects.all().count()
         for ctx_name, formset_class in self.formsets.items():
             if ctx_name not in ctx:
-                ctx[ctx_name] = formset_class(
-                    self.request.POST,
-                    # instance=instance
-                )
+                ctx[ctx_name] = formset_class()
         return ctx
 
     def process_all_forms(self):
