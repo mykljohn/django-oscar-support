@@ -96,13 +96,3 @@ class RelatedProductFormSet(BaseRelatedProductFormSet):
         kwargs['user'] = self.user
         return super(RelatedProductFormSet, self)._construct_form(
             i, **kwargs)
-
-
-# PriorityFormSet = formset_factory(PriorityForm, extra=5, can_delete=True)
-PriorityFormSet = modelformset_factory(Priority, form=PriorityForm, extra=3, can_delete=True)
-
-# TicketStatusFormSet = formset_factory(TicketStatusForm, extra=3, can_delete=True)
-TicketStatusFormSet = modelformset_factory(TicketStatus, form=TicketStatusForm, extra=3, can_delete=True)
-
-# TicketTypeFormSet = formset_factory(TicketTypeForm, extra=3, can_delete=True)
-TicketTypeFormSet = modelformset_factory(TicketType, form=TicketTypeForm, extra=3, can_delete=True)
