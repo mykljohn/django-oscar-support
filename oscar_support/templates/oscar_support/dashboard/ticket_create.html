@@ -90,7 +90,7 @@
         </div>
         <div class="fixed-actions-group">
             <div class="form-actions">
-                <a class="btn" href="">{% trans "cancel" %}</a>
+                <a class="btn" href="{% url 'support-dashboard:ticket-list' %}">{% trans "cancel" %}</a>
                 <div class="pull-right">
                     {% include "oscar_support/dashboard/partials/save_with_status.html" %}
                 </div>
