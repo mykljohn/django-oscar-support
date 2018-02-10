@@ -2,10 +2,8 @@ from django.contrib import admin
 from oscar.core.loading import get_model
 
 Attachment = get_model('oscar_support', 'Attachment')
-Basket = get_model('basket', 'Basket')
 Line = get_model('order', 'Line')
 Message = get_model('oscar_support', 'Message')
-Order = get_model('order', 'Order')
 Priority = get_model("oscar_support", "Priority")
 Product = get_model('catalogue', 'Product')
 RelatedOrder = get_model("oscar_support", "RelatedOrder")
@@ -54,8 +52,8 @@ class TicketStatusAdmin(admin.ModelAdmin):
 
 
 class PriorityAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug']
-    fields = ['name', 'slug']
+    list_display = ['name', 'slug', 'comment']
+    fields = ['name', 'slug', 'comment']
     readonly_fields = ['slug']
 
 
@@ -72,7 +70,14 @@ class TicketAdmin(admin.ModelAdmin):
     list_filter = ['is_internal', 'requester', 'type', 'assignee', 'priority', 'status']
     raw_id_fields = ['related_lines', 'related_orders', 'related_products']
     readonly_fields = ['date_created', 'date_updated']
-    search_fields = ['is_internal', 'requester', 'type', 'assignee', 'priority', 'status']
+    search_fields = [
+        'is_internal',
+        'requester__username',
+        'type__name',
+        'assignee__username',
+        'priority__name',
+        'status__name'
+    ]
 
 
 class MessageAdmin(admin.ModelAdmin):
@@ -80,7 +85,7 @@ class MessageAdmin(admin.ModelAdmin):
     list_display = ['user', 'type', 'ticket', 'text']
     list_filter = ['user', 'type', 'ticket']
     readonly_fields = ['date_created', 'date_updated']
-    search_fields = ['user', 'type', 'ticket']
+    search_fields = ['user__username', 'type', 'ticket__number']
 
 
 class RelatedOrderAdmin(admin.ModelAdmin):
@@ -88,7 +93,7 @@ class RelatedOrderAdmin(admin.ModelAdmin):
     list_display = ['user', 'ticket', 'order']
     list_filter = ['user', 'ticket', ]
     readonly_fields = ['date_created', 'date_updated']
-    search_fields = ['user', 'ticket', ]
+    search_fields = ['user__username', 'ticket__number', ]
 
 
 class RelatedOrderLineAdmin(admin.ModelAdmin):
@@ -96,7 +101,7 @@ class RelatedOrderLineAdmin(admin.ModelAdmin):
     list_display = ['user', 'ticket', 'line']
     list_filter = ['user', 'ticket', ]
     readonly_fields = ['date_created', 'date_updated']
-    search_fields = ['user', 'ticket', ]
+    search_fields = ['user__username', 'ticket__number', ]
 
 
 class RelatedProductAdmin(admin.ModelAdmin):
@@ -104,7 +109,7 @@ class RelatedProductAdmin(admin.ModelAdmin):
     list_display = ['user', 'ticket', 'product']
     list_filter = ['user', 'ticket', ]
     readonly_fields = ['date_created', 'date_updated']
-    search_fields = ['user', 'ticket', ]
+    search_fields = ['user__username', 'ticket__number', ]
 
 
 class AttachmentAdmin(admin.ModelAdmin):
@@ -112,7 +117,7 @@ class AttachmentAdmin(admin.ModelAdmin):
     list_display = ['user', 'ticket', 'file']
     list_filter = ['user', 'ticket', ]
     readonly_fields = ['date_created', 'date_updated']
-    search_fields = ['user', 'ticket', ]
+    search_fields = ['user__username', 'ticket__number', ]
 
 
 admin.site.register(TicketType, TicketTypeAdmin)
