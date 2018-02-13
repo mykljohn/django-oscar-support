@@ -5,28 +5,57 @@
 {% block body_class %}{{ block.super }} tags{% endblock %}
 
 {% block title %}
-    {% trans "Support tags" %} | {{ block.super }}
+{% trans "Support tags" %} | {{ block.super }}
 {% endblock %}
 
 {% block headertext %}
-    {% trans "Support tags" %}
+{% trans "Support tags" %}
 {% endblock %}
 
 {% block breadcrumbs %}
-    <ul class="breadcrumb">
-        <li>
-            <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
-        </li>
-        <li class="active">
-            <a href="{% url 'support-dashboard:tag-list' %}">{% trans "Support tags" %}</a>
-        </li>
-    </ul>
+<ul class="breadcrumb">
+    <li>
+        <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
+    </li>
+    <li class="active">
+        <a href="{% url 'support-dashboard:ticket-list' %}">{% trans "Support tickets" %}</a>
+    </li>
+    <li class="active">{{ page_title }}</li>
+</ul>
 {% endblock %}
 
 {% block dashboard_content %}
-    {% include "oscar_support/dashboard/partials/inline_tag.html" with title="Types" id="ticket-type" count=type_count tag_formset=ticket_type_formset %}
-
-    {% include "oscar_support/dashboard/partials/inline_tag.html" with title="Statuses" id="ticket-status" count=status_count tag_formset=ticket_status_formset %}
-
-    {% include "oscar_support/dashboard/partials/inline_tag.html" with title="Priorities" id="ticket-priority" count=priority_count tag_formset=priority_formset %}
+<div class='container-fluid'>
+    {% block tab_nav %}
+    <aside class="col-md-3">
+        <div data-spy="affix" class="affix-top" data-offset-top="200">
+            <div class="table-header">
+                <h3><i class="icon-tags icon-large"></i>{% trans "Topics" %}</h3>
+            </div>
+            <ul class="nav nav-list bs-docs-sidenav" role="tablist">
+                {% block tabs %}
+                <li {% if active_tab == 'types' %}class="active"{% endif %}>
+                <a href="{% url 'support-dashboard:tag-type-list' %}">{% trans 'Types' %}</a>
+                </li>
+                <li {% if active_tab == 'statuses' %}class="active"{% endif %}>
+                <a href="{% url 'support-dashboard:tag-status-list' %}">{% trans 'Statuses' %}</a>
+                </li>
+                <li {% if active_tab == 'priorities' %}class="active"{% endif %}>
+                <a href="{% url 'support-dashboard:tag-priority-list' %}">{% trans 'Priorities' %}</a>
+                </li>
+                {% endblock tabs %}
+            </ul>
+        </div>
+    </aside>
+    {% endblock tab_nav %}
+    <div class="col-md-9">
+        <div class="table-header">
+            <h3><i class="icon-edit icon-large"></i>{% trans "View and Edit" %}</h3>
+        </div>
+        <div class="content-block">
+            {% block dasboard_content %}
+            {% endblock dasboard_content %}
+        </div>
+    </div>
+</div>
 {% endblock dashboard_content %}

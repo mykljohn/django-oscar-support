@@ -5,15 +5,19 @@ from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.views import generic
 
+from extra_views import ModelFormSetView
+
 from oscar.core.loading import get_model
+from oscar_support.dashboard.forms import (
+    PriorityForm,
+    TicketStatusForm,
+    TicketTypeForm
+)
 from oscar_support.forms.formsets import (
     AttachmentFormSet,
     RelatedOrderFormSet,
     RelatedOrderLineFormSet,
     RelatedProductFormSet,
-    PriorityFormSet,
-    TicketStatusFormSet,
-    TicketTypeFormSet
 )
 
 from . import forms
@@ -192,79 +196,85 @@ class TicketUpdateView(TicketListMixin, generic.UpdateView):
         return reverse("support-dashboard:ticket-list")
 
 
-class TagListView(generic.ListView):
-    model = Priority
-    priority_formset = PriorityFormSet
-    ticket_status_formset = TicketStatusFormSet
-    ticket_type_formset = TicketTypeFormSet
-    template_name = 'oscar_support/dashboard/tag_list.html'
-
-    def __init__(self, *args, **kwargs):
-        super(TagListView, self).__init__(*args, **kwargs)
-        self.formsets = {
-            'priority_formset': self.priority_formset,
-            'ticket_status_formset': self.ticket_status_formset,
-            'ticket_type_formset': self.ticket_type_formset,
-        }
+class TypesEditView(TicketListMixin, ModelFormSetView):
+    template_name = 'oscar_support/dashboard/tags/types.html'
+    page_title = _('Types')
+    active_tab = 'types'
+    model = TicketType
+    form_class = TicketTypeForm
+    extra = 5
+    max_num = None
+    can_delete = True
 
     def get_context_data(self, **kwargs):
-        ctx = super(TagListView, self).get_context_data(**kwargs)
-        ctx['type_count'] = TicketType.objects.all().count()
-        ctx['status_count'] = TicketStatus.objects.all().count()
-        ctx['priority_count'] = Priority.objects.all().count()
-        for ctx_name, formset_class in self.formsets.items():
-            if ctx_name not in ctx:
-                ctx[ctx_name] = formset_class(
-                    self.request.POST,
-                    # instance=instance
-                )
+        ctx = super(TypesEditView, self).get_context_data(**kwargs)
+        ctx.setdefault('page_title', self.page_title)
+        ctx.setdefault('active_tab', self.active_tab)
+        ctx.setdefault('url', reverse("support-dashboard:tag-type-list"))
+        ctx['type_count'] = self.model.objects.all().count()
         return ctx
 
-    def process_all_forms(self):
-
-        formsets = {}
-        for ctx_name, formset_class in self.formsets.items():
-            formsets[ctx_name] = formset_class(
-                self.request.POST,
-                # instance=self.object
-            )
-
-        is_valid = all(
-            [formset.is_valid() for formset in formsets.values()]
-        )
-
-        cross_form_validation_result = self.clean(formsets)
-        if is_valid and cross_form_validation_result:
-            return self.forms_valid(formsets)
-        else:
-            return self.forms_invalid(formsets)
-
-    form_valid = form_invalid = process_all_forms
-
-    def clean(self, form, formsets):
-
-        return True
-
-    def forms_valid(self, form, formsets):
-        for formset in formsets.values():
-            formset.save()
-
-        return HttpResponseRedirect(self.get_success_url())
-
-    def forms_invalid(self, form, formsets):
-
-        messages.error(
-            self.request,
-            _("Your submitted data was not valid - please "
-              "correct the errors below")
-        )
-        ctx = self.get_context_data(form=form, **formsets)
-        return self.render_to_response(ctx)
-
     def get_success_url(self):
-
         messages.success(
             self.request,
-            _("Successfully updated {0}.").format(self.object), extra_tags="safe noicon"
+            # TODO: Render the model updated value
+            # _("Successfully updated type {0}!.").format(self.get_formset), extra_tags="safe noicon"
+            _("Successfully updated type!."), extra_tags="safe noicon"
         )
-        return reverse("support-dashboard:tag-list")
+        return reverse("support-dashboard:tag-type-list")
+
+
+class StatusesEditView(TicketListMixin, ModelFormSetView):
+    template_name = 'oscar_support/dashboard/tags/statuses.html'
+    page_title = _('Statuses')
+    active_tab = 'statuses'
+    model = TicketStatus
+    form_class = TicketStatusForm
+    extra = 5
+    max_num = None
+    can_delete = True
+
+    def get_context_data(self, **kwargs):
+        ctx = super(StatusesEditView, self).get_context_data(**kwargs)
+        ctx.setdefault('page_title', self.page_title)
+        ctx.setdefault('active_tab', self.active_tab)
+        ctx.setdefault('url', reverse("support-dashboard:tag-status-list"))
+        ctx['status_count'] = self.model.objects.all().count()
+        return ctx
+
+    def get_success_url(self):
+        messages.success(
+            self.request,
+            # TODO: Render the model updated value
+            # _("Successfully updated status {0}!.").format(self.get_formset), extra_tags="safe noicon"
+            _("Successfully updated status!."), extra_tags="safe noicon"
+        )
+        return reverse("support-dashboard:tag-status-list")
+
+
+class PrioritiesEditView(TicketListMixin, ModelFormSetView):
+    template_name = 'oscar_support/dashboard/tags/priorities.html'
+    page_title = _('Priorities')
+    active_tab = 'priorities'
+    model = Priority
+    form_class = PriorityForm
+    extra = 5
+    max_num = None
+    can_delete = True
+
+    def get_context_data(self, **kwargs):
+        ctx = super(PrioritiesEditView, self).get_context_data(**kwargs)
+        ctx.setdefault('page_title', self.page_title)
+        ctx.setdefault('active_tab', self.active_tab)
+        ctx.setdefault('url', reverse("support-dashboard:tag-priority-list"))
+        ctx['priority_count'] = self.model.objects.all().count()
+        return ctx
+
+    def get_success_url(self):
+        messages.success(
+            self.request,
+            # TODO: Render the model updated value
+            # _("Successfully updated priority {0}!.").format(self.get_formset), extra_tags="safe noicon"
+            _("Successfully updated priority!."), extra_tags="safe noicon"
+        )
+        return reverse("support-dashboard:tag-priority-list")
